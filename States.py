@@ -3,6 +3,7 @@ from aiogram.dispatcher.filters.state import State, StatesGroup
 class AdminPanel(StatesGroup):
     main_state = State()
 
+# Seller Branch
 class SellerRegistration(StatesGroup):
     get_sellers_name_state = State()
     get_sellers_phone_number_state = State()
@@ -20,6 +21,7 @@ class SellersPersonalInfo(StatesGroup):
     change_sellers_TIN_state = State()
     change_sellers_ShopsName_state = State()
 
+# Director Branch
 class DirectorRegistration(StatesGroup):
     get_directors_name_state = State()
     get_directors_phone_number_state = State()
@@ -35,3 +37,9 @@ class DirectorsPersonalInfo(StatesGroup):
     change_directors_addres_state = State()
     change_directors_TIN_state = State()
     change_directors_ShopsName_state = State()
+
+class DirectorAddShopLocations(StatesGroup):
+    add_shop_state = State
+
+# Managers Branch
+

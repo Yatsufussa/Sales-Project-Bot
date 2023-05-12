@@ -17,15 +17,23 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 async def start_command(message):
     start_text = f'Hello {message.from_user.first_name} Im sales bot SOJ'
     await message.answer(start_text)
+    answer = message.text
     user_id = message.from_user.id
-    checker = database.check_user(user_id)
-    check_d = database.check_director(user_id)
-    if checker:
+    seller = database.check_user(user_id)
+    director = database.check_director(user_id)
+    manager = database.check_manager(user_id)
+
+    if seller:
         await message.answer("Choose the operation", reply_markup=buttons.sellors_main_menu_kb())
-    elif check_d:
-        await message.answer('Hello Director,Choose operation: ' ,reply_markup= buttons)
+
+    elif director:
+        await message.answer('Hello Director,Choose operation: ' ,reply_markup= buttons.directors_main_menu_kb())
+
+    elif manager:
+        await message.answer("Welcome Manager!\nWhat do you want?", reply_markup=buttons.managers_main_menu_kb())
+
     else:
-        await message.answer("Registration\nAre you Seller or Director:", reply_markup=buttons.admin_kb())
+        await message.answer("Registration\nAre you:\nSeller\nDirector\nManager\nAdmin", reply_markup=buttons.admin_kb())
         await States.AdminPanel.main_state.set()
 
 @dp.message_handler(state= AdminPanel.main_state,content_types=['text'])
@@ -41,8 +49,18 @@ async def main_menu(message):
         await message.answer("Write your full name in one message please: ", reply_markup=ReplyKeyboardRemove())
         await DirectorRegistration.get_directors_name_state.set()
 
+    elif admin =="Im Manager":
+        await message.answer('Enter Login', reply_markup=ReplyKeyboardRemove())
+        login = message.text
+        await message.answer('Enter Password', reply_markup=ReplyKeyboardRemove())
+        password = message.text
+        database.check_log(login, password)
+        if True:
+            await message.answer("Welcome Manager!\nWhat do you want?", reply_markup=buttons.managers_main_menu_kb())
+        else:
+            await message.answer('Incorrect Login or Password!', reply_markup=buttons.admin_kb())
     else:
-        await message.answer("Press the button", reply_markup=buttons.admin_kb())
+        await message.answer("Who are u press the button", reply_markup=buttons.admin_kb())
 
 
 @dp.message_handler(content_types=['text'],state = SellerRegistration.get_sellers_name_state)
@@ -109,30 +127,30 @@ async def seller_manager_id(message, state=SellerRegistration.get_manager_id_sta
     print(database.get_sellers())
     await state.finish()
 
-# @dp.message_handler(state=SellersPersonalInfo.change_data_state)
-# async def change_data(message,state=SellersPersonalInfo.change_data_state):
-#     admin = message.text
-#     if admin == "Change Name":
-#         await message.answer("Write new name: ",reply_markup=ReplyKeyboardRemove())
-#         await SellersPersonalInfo.change_sellers_name_state.set()
-#
-#     elif admin  == 'Change phone number':
-#         await message.answer("Send new phone number: ",reply_markup=buttons.get_phone_number_kb())
-#         await SellersPersonalInfo.change_sellers_number_state.set()
-#
-#     elif admin == 'Change shop address':
-#         await message.answer("Send new location: ",reply_markup=buttons.location_kb())
-#         await SellersPersonalInfo.change_sellers_addres_state.set()
-#
-#     elif admin == 'Change TIN(INN)':
-#         await message.answer('Write new TIN(INN): ',reply_markup=ReplyKeyboardRemove())
-#         await SellersPersonalInfo.change_sellers_TIN_state.set()
-#     elif admin == 'Change shop name':
-#         await message.answer("Write new shops name: ",reply_markup=ReplyKeyboardRemove())
-#         await SellersPersonalInfo.change_sellers_ShopsName_state.set()
-#
-#     else:
-#         await message.answer("Choose what to change")
+@dp.message_handler(state=SellersPersonalInfo.change_data_state)
+async def change_data(message,state=SellersPersonalInfo.change_data_state):
+    admin = message.text
+    if admin == "Change Name":
+        await message.answer("Write new name: ",reply_markup=ReplyKeyboardRemove())
+        await SellersPersonalInfo.change_sellers_name_state.set()
+
+    elif admin  == 'Change phone number':
+        await message.answer("Send new phone number: ",reply_markup=buttons.get_phone_number_kb())
+        await SellersPersonalInfo.change_sellers_number_state.set()
+
+    elif admin == 'Change shop address':
+        await message.answer("Send new location: ",reply_markup=buttons.location_kb())
+        await SellersPersonalInfo.change_sellers_addres_state.set()
+
+    elif admin == 'Change TIN(INN)':
+        await message.answer('Write new TIN(INN): ',reply_markup=ReplyKeyboardRemove())
+        await SellersPersonalInfo.change_sellers_TIN_state.set()
+    elif admin == 'Change shop name':
+        await message.answer("Write new shops name: ",reply_markup=ReplyKeyboardRemove())
+        await SellersPersonalInfo.change_sellers_ShopsName_state.set()
+
+    else:
+        await message.answer("Choose what to change")
 
 # CHANGE DATA MESSAGE HANDLERS
 
@@ -144,7 +162,7 @@ async def change_name(message,state=SellersPersonalInfo.change_sellers_name_stat
     new_name = all_info.get('changed_name')
     user_id = message.from_user.id
     database.change_name(new_name,user_id)
-    await message.answer('Your name changed!',reply_markup=buttons.change_sellors_personal_data_kb())
+    await message.answer('Your name changed!',reply_markup=buttons.sellors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=SellersPersonalInfo.change_sellers_number_state,content_types=['contact'])
@@ -155,7 +173,7 @@ async def chanange_phone_num(message,state=SellersPersonalInfo.change_sellers_nu
     new_num = all_info.get('new_number')
     user_id = message.from_user.id
     database.change_phone_number(new_num,user_id)
-    await message.answer('Your name changed!',reply_markup=buttons.change_sellors_personal_data_kb())
+    await message.answer('Your name changed!',reply_markup=buttons.sellors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=SellersPersonalInfo.change_sellers_addres_state,content_types=['location'])
@@ -168,7 +186,7 @@ async def chanange_phone_num(message,state=SellersPersonalInfo.change_sellers_ad
     latitude = all_info.get('latitude')
     longitude = all_info.get('longitude')
     database.change_shop_address(latitude,longitude,user_id)
-    await message.answer('Location changed!',reply_markup=buttons.change_sellors_personal_data_kb())
+    await message.answer('Location changed!',reply_markup=buttons.sellors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=SellersPersonalInfo.change_sellers_TIN_state)
@@ -179,7 +197,7 @@ async def chanange_phone_num(message,state=SellersPersonalInfo.change_sellers_TI
     new_inn = all_info.get('new_TIN')
     user_id = message.from_user.id
     database.change_sellers_TIN(new_inn,user_id)
-    await message.answer('Your changed TIN!',reply_markup=buttons.change_sellors_personal_data_kb())
+    await message.answer('Your changed TIN!',reply_markup=buttons.sellors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=SellersPersonalInfo.change_sellers_ShopsName_state)
@@ -190,7 +208,7 @@ async def chanange_phone_num(message,state=SellersPersonalInfo.change_sellers_Sh
     new_sh_name = all_info.get('new_shop_name')
     user_id = message.from_user.id
     database.change_shop_name(new_sh_name,user_id)
-    await message.answer('You changed Shops name!',reply_markup=buttons.change_sellors_personal_data_kb())
+    await message.answer('You changed Shops name!',reply_markup=buttons.sellors_main_menu_kb())
     await state.finish()
 
 # DIrector Branch
@@ -206,7 +224,7 @@ async def directors_name(message, state=DirectorRegistration.get_directors_name_
 async def directors_phone(message, state=DirectorRegistration.get_directors_phone_number_state):
     director_phone = message.contact.phone_number
     await state.update_data(d_number=director_phone)
-    await message.answer('Write your TIN', reply_markup=buttons.location_kb())
+    await message.answer('Write your TIN', reply_markup = ReplyKeyboardRemove())
     await DirectorRegistration.get_directors_TIN_state.set()
 
 @dp.message_handler(state=DirectorRegistration.get_directors_TIN_state, content_types=['text'])
@@ -234,8 +252,9 @@ async def director_manager_id(message, state=DirectorRegistration.get_manager_id
     INN = all_info.get('d_TIN')
     shop_name = all_info.get("d_shop_name")
     manager_id = all_info.get("manager_id")
+    Shop_address = 0
     user_id = message.from_user.id
-    database.add_director(user_id,seller_name, phone_num,INN, shop_name, manager_id)
+    database.add_director(user_id,seller_name, phone_num,INN, shop_name, manager_id,Shop_address)
     await message.answer("Data accepted and collected")
     print(database.get_director(user_id))
     await state.finish()
@@ -272,7 +291,7 @@ async def change_name(message,state=DirectorsPersonalInfo.change_directors_name_
     new_name = all_info.get('changed_name')
     user_id = message.from_user.id
     database.change_d_name(new_name,user_id)
-    await message.answer('Your name changed!',reply_markup=buttons.change_sellors_personal_data_kb())
+    await message.answer('Your name changed!',reply_markup=buttons.directors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=DirectorsPersonalInfo.change_directors_number_state,content_types=['contact'])
@@ -283,7 +302,7 @@ async def chanange_phone_num(message,state=DirectorsPersonalInfo.change_director
     new_num = all_info.get('new_number')
     user_id = message.from_user.id
     database.change_d_phone_number(new_num,user_id)
-    await message.answer('Your name changed!',reply_markup=buttons.change_directors_personal_data_kb())
+    await message.answer('Your name changed!',reply_markup=buttons.directors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=DirectorsPersonalInfo.change_directors_TIN_state)
@@ -294,7 +313,7 @@ async def chanange_phone_num(message,state=DirectorsPersonalInfo.change_director
     new_inn = all_info.get('new_TIN')
     user_id = message.from_user.id
     database.change_directors_TIN(new_inn,user_id)
-    await message.answer('Your changed TIN!',reply_markup=buttons.change_directors_personal_data_kb())
+    await message.answer('Your changed TIN!',reply_markup=buttons.directors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=DirectorsPersonalInfo.change_directors_ShopsName_state)
@@ -305,7 +324,21 @@ async def chanange_phone_num(message,state=DirectorsPersonalInfo.change_director
     new_sh_name = all_info.get('new_shop_name')
     user_id = message.from_user.id
     database.change_d_shop_name(new_sh_name,user_id)
-    await message.answer('You changed Shops name!',reply_markup=buttons.change_directors_personal_data_kb())
+    await message.answer('You changed Shops name!',reply_markup=buttons.directors_main_menu_kb())
+    await state.finish()
+
+# Directors ADD SHOP BRANCH
+
+@dp.message_handler(state=DirectorAddShopLocations.add_shop_state, content_types=['location'])
+async def add_shops(message, state=DirectorAddShopLocations.add_shop_state):
+    user_answer = message.location.latitude
+    user_answer_2 = message.location.longitude
+    user_id = message.from_user.id
+    await state.update_data(latitude=user_answer, longitude=user_answer_2)
+    all_info = await state.get_data()
+    new_location = all_info.get('latitude','longitude')
+    database.add_shops(new_location, user_id)
+    await message.answer('Location Added!', reply_markup=buttons.directors_main_menu_kb())
     await state.finish()
 
 
@@ -322,45 +355,25 @@ async def chanange_phone_num(message,state=DirectorsPersonalInfo.change_director
 
 @dp.message_handler(content_types=['text'])
 async def sellors_all_info(message):
-    seller = database.get_seller(message.from_user.id)
-    director = database.get_director(message.from_user.id)
+    user_id = message.from_user.id
+    seller = database.check_user(user_id)
+    director = database.check_director(user_id)
+    manager = database.check_manager(user_id)
     answer = message.text
 
+
     if seller:
-        await message.answer("Choose the operationn")
         if  answer == 'Personal info':
             result_answer = "Personal Info:\n"
             for i in seller:
                 result_answer = f'Name: {i[1]}.\nPhone: {i[2]}.\nLocation Latitude: {i[3]}.Location Longitude: {i[4]}\nTIN: {i[5]}.\nShop name: {i[6]}'
-                await message.answer(result_answer,reply_markup=buttons.change_personal_data_kb())
+                await message.answer(result_answer,reply_markup=buttons.sellors_main_menu_kb())
+        elif answer == "Change data":
             await message.answer('What do u want to change', reply_markup=buttons.change_sellors_personal_data_kb())
-            # await SellersPersonalInfo.change_data_state.set()
-            admin = message.text
-            if admin == "Change Name":
-                await message.answer("Write new name: ", reply_markup=ReplyKeyboardRemove())
-                await SellersPersonalInfo.change_sellers_name_state.set()
-
-            elif admin == 'Change phone number':
-                await message.answer("Send new phone number: ", reply_markup=buttons.get_phone_number_kb())
-                await SellersPersonalInfo.change_sellers_number_state.set()
-
-            elif admin == 'Change shop address':
-                await message.answer("Send new location: ", reply_markup=buttons.location_kb())
-                await SellersPersonalInfo.change_sellers_addres_state.set()
-
-            elif admin == 'Change TIN(INN)':
-                await message.answer('Write new TIN(INN): ', reply_markup=ReplyKeyboardRemove())
-                await SellersPersonalInfo.change_sellers_TIN_state.set()
-            elif admin == 'Change shop name':
-                await message.answer("Write new shops name: ", reply_markup=ReplyKeyboardRemove())
-                await SellersPersonalInfo.change_sellers_ShopsName_state.set()
-
-            else:
-                await message.answer("Choose what to change")
+            await SellersPersonalInfo.change_data_state.set()
 
         elif  answer == 'Tasks':
             pass
-
         elif  answer == 'Check download':
             pass
         elif  answer == 'Balance':
@@ -375,20 +388,26 @@ async def sellors_all_info(message):
             pass
         else:
             pass
+
+
     elif director:
         if  answer == 'Personal info':
+            director_all_info = database.get_director(user_id)
             result_answer = "Personal Info:\n"
-            for i in seller:
+            for i in director_all_info:
                 result_answer = f'Name: {i[1]}.\nPhone: {i[2]}.\nTIN: {i[3]}.\nShop name: {i[4]}'
                 await message.answer(result_answer, reply_markup=buttons.change_personal_data_kb())
-            if message.text == "Change data":
-                await message.answer('What do u want to change', reply_markup=buttons.change_directors_personal_data_kb())
-                await DirectorsPersonalInfo.change_data_state.set()
 
-        elif  answer == 'Tasks':
+        elif answer == "Change data":
+            await message.answer('What do u want to change', reply_markup=buttons.change_directors_personal_data_kb())
+            await DirectorsPersonalInfo.change_data_state.set()
+
+        elif answer == 'Tasks':
             pass
 
-        elif  answer == 'Add shops locations: ':
+        elif answer == 'Add shop location':
+            # await message.answer('Add locations of your shops: ',reply_markup=buttons.location_kb())
+            # await States.DirectorAddShopLocations.add_shop_state.set()
             pass
 
         elif  answer == 'Balance':
@@ -402,8 +421,27 @@ async def sellors_all_info(message):
         elif  answer == 'Ask a question':
             pass
         else:
+            await message.answer("Choose the buttonn")
+
+    elif manager:
+        if answer == 'Shop Owners':
             pass
-        await message.answer("Choose the button")
+        elif answer == 'Sellers':
+            pass
+        elif answer == 'Tasks':
+            pass
+        elif answer == 'Balance':
+            pass
+        elif answer == 'Gifts to change':
+            pass
+        elif answer == 'Chat':
+            pass
+        else:
+            await message.answer("Choose the operation manager")
+
+
+    else:
+        await message.answer("Choose the button from kb")
 
 
 

@@ -5,7 +5,9 @@ def admin_kb():
     kb =ReplyKeyboardMarkup(resize_keyboard=True,row_width=2)
     button1 =KeyboardButton("Im Seller")
     button2 =KeyboardButton("Im Director,Leader")
-    kb.add(button1,button2)
+    button3 =KeyboardButton("Im Manager")
+    button4 =KeyboardButton("Im Admin")
+    kb.add(button1,button2,button3,button4)
     return kb
 
 def get_phone_number_kb():
@@ -51,7 +53,7 @@ def change_sellors_personal_data_kb():
     return kb
 
 def change_directors_personal_data_kb():
-    kb = ReplyKeyboardMarkup(resize_keyboard=True)
+    kb = ReplyKeyboardMarkup(resize_keyboard=True,row_width=2)
     button1 = KeyboardButton('Change Name')
     button2 = KeyboardButton('Change phone number')
     button3 = KeyboardButton('Change TIN(INN)')
@@ -63,11 +65,22 @@ def directors_main_menu_kb():
     kb = ReplyKeyboardMarkup(resize_keyboard=True,row_width=3)
     button1 = KeyboardButton('Personal info')
     button2 = KeyboardButton('Tasks')
-    button3 = KeyboardButton('Check download')
+    button3 = KeyboardButton('Add shop location')
     button4 = KeyboardButton('Balance')
     button5 = KeyboardButton('Gifts available')
     button6 = KeyboardButton('Get the Cash')
     button7 = KeyboardButton('Knowledge Base')
     button8 = KeyboardButton('Ask a question')
     kb.add(button1,button2,button3,button4,button5,button6,button7,button8)
+    return kb
+
+def managers_main_menu_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
+    button1 = KeyboardButton('Shop Owners')
+    button2 = KeyboardButton('Sellers')
+    button3 = KeyboardButton('Tasks')
+    button4 = KeyboardButton('Balance')
+    button5 = KeyboardButton('Gifts to change')
+    button6 = KeyboardButton('Chat')
+    kb.add(button1, button2, button3, button4, button5, button6)
     return kb
