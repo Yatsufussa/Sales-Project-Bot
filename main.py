@@ -33,13 +33,13 @@ async def start_command(message):
         await message.answer("Welcome Manager!\nWhat do you want?", reply_markup=buttons.managers_main_menu_kb())
 
     else:
-        await message.answer("Registration\nAre you:\nSeller\nDirector\nManager\nAdmin", reply_markup=buttons.admin_kb())
+        await message.answer("Registration\n\nAre you:\nSeller\nDirector\nManager\nAdmin", reply_markup=buttons.admin_kb())
         await States.AdminPanel.main_state.set()
+
 
 @dp.message_handler(state= AdminPanel.main_state,content_types=['text'])
 async def main_menu(message):
     # If user already registered in database so we send menu
-    await message.answer("Registration\nAre you Seller or Director:", reply_markup=buttons.admin_kb())
     admin = message.text
     if admin == "Im Seller":
             await message.answer("Write your full name in one message please: ", reply_markup=ReplyKeyboardRemove())
@@ -50,27 +50,69 @@ async def main_menu(message):
         await DirectorRegistration.get_directors_name_state.set()
 
     elif admin =="Im Manager":
-        await message.answer('Enter Login', reply_markup=ReplyKeyboardRemove())
-        login = message.text
-        await message.answer('Enter Password', reply_markup=ReplyKeyboardRemove())
-        password = message.text
-        database.check_log(login, password)
-        if True:
-            await message.answer("Welcome Manager!\nWhat do you want?", reply_markup=buttons.managers_main_menu_kb())
-        else:
-            await message.answer('Incorrect Login or Password!', reply_markup=buttons.admin_kb())
+        await message.answer("Enter Login pls",reply_markup=ReplyKeyboardRemove())
+        await CheckManager.login_state.set()
+    elif admin == "Im Admin":
+        await message.answer("Enter Login pls",reply_markup=ReplyKeyboardRemove())
+        await CheckAdmin.login_state.set()
     else:
         await message.answer("Who are u press the button", reply_markup=buttons.admin_kb())
 
+# MANAGERS SECURITY LOGIN
+@dp.message_handler(state=CheckManager.login_state)
+async def log(message,state = CheckManager.login_state):
+     login = message.text
+     if database.check_log(login):
+         await message.answer("Correct login!\nEnter password now: ",reply_markup=ReplyKeyboardRemove())
+         await CheckManager.password_state.set()
+     else:
+        await message.answer("Incorrect choose the button! ",reply_markup=admin_kb())
+        await AdminPanel.main_state.set()
 
+@dp.message_handler(state=CheckManager.password_state)
+async def log(message,state = CheckManager.password_state):
+     password = message.text
+     if database.check_pas(password):
+         await message.answer("Verified Succesfully!\nChoose operations: ",reply_markup=buttons.managers_main_menu_kb())
+         user_id = message.from_user.id
+         database.add_manager(user_id,password)
+         await state.finish()
+     else:
+        await message.answer("Incorrect choose the button! ",reply_markup=admin_kb())
+        await AdminPanel.main_state.set()
+
+
+# CHECK ADMINS PASSWORD AND LOGIN
+@dp.message_handler(state=CheckAdmin.login_state)
+async def log_a(message, state=CheckAdmin.login_state):
+    login = message.text
+    if database.check_a_log(login):
+        await message.answer("Correct login!\nEnter password now: ", reply_markup=ReplyKeyboardRemove())
+        await CheckAdmin.password_state.set()
+    else:
+        await message.answer("Incorrect choose the button! ", reply_markup=admin_kb())
+        await AdminPanel.main_state.set()
+
+@dp.message_handler(state=CheckAdmin.password_state)
+async def pas_a(message, state=CheckAdmin.password_state):
+    password = message.text
+    if database.check_a_pas(password):
+        await message.answer("Verified Succesfully!\nChoose operations: ", reply_markup=buttons.admin_main_menu_kb())
+        user_id = message.from_user.id
+        database.add_admin(user_id)
+        await state.finish()
+    else:
+        await message.answer("Incorrect choose the button! ", reply_markup=admin_kb())
+        await AdminPanel.main_state.set()
+
+
+# SELLER REGISTRATION BRANCH
 @dp.message_handler(content_types=['text'],state = SellerRegistration.get_sellers_name_state)
 async def sellers_name(message, state=SellerRegistration.get_sellers_name_state):
     sellers_name = message.text
     await state.update_data(user_name=sellers_name)
     await message.answer('Share now phone number', reply_markup=buttons.get_phone_number_kb())
     await SellerRegistration.get_sellers_phone_number_state.set()
-
-
 
 @dp.message_handler(state=SellerRegistration.get_sellers_phone_number_state, content_types=['contact'])
 async def sellers_phone(message, state=SellerRegistration.get_sellers_phone_number_state):
@@ -342,8 +384,31 @@ async def add_shops(message, state=DirectorAddShopLocations.add_shop_state):
     await state.finish()
 
 
-
-
+# Managers Shop owners branch
+@dp.message_handler(state=ShopOwnerM.shop_owners_state)
+async def shop_own(message,state=ShopOwnerM.shop_owners_state):
+    manager_id = message.text
+    user = database.get_shop_owners(manager_id)
+    if user:
+        owner_info = "Owners Personal Info:\n"
+        for i in user:
+            owner_info = f'Name: {i[1]}.\nPhone: {i[2]}.\nLocation Latitude: {i[3]}.Location Longitude: {i[4]}\nTIN: {i[5]}.\nShop name: {i[6]}'
+            await message.answer(owner_info, reply_markup=buttons.shop_owner_kb())
+            choice = message.text
+            if choice == "List of owner's shops":
+                pass
+            elif choice == 'Add new shop loc.':
+                pass
+            elif choice == 'Change owners info':
+                pass
+            elif choice == 'Balance':
+                pass
+            elif choice == 'Tasks':
+                pass
+            else:
+                await message.answer('Choose the button!')
+    else:
+        pass
 
 
 
@@ -425,7 +490,8 @@ async def sellors_all_info(message):
 
     elif manager:
         if answer == 'Shop Owners':
-            pass
+            await message.answer("Write the ID of the Owner: ")
+            await ShopOwnerM.shop_owners_state.set()
         elif answer == 'Sellers':
             pass
         elif answer == 'Tasks':

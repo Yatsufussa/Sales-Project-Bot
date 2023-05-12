@@ -39,7 +39,20 @@ class DirectorsPersonalInfo(StatesGroup):
     change_directors_ShopsName_state = State()
 
 class DirectorAddShopLocations(StatesGroup):
-    add_shop_state = State
+    add_shop_state = State()
 
 # Managers Branch
+class CheckManager(StatesGroup):
+    login_state = State()
+    password_state = State()
 
+class ShopOwnerM(StatesGroup):
+    shop_owners_state = State()
+
+
+
+
+
+class CheckAdmin(StatesGroup):
+    login_state = State()
+    password_state =State()

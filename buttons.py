@@ -84,3 +84,26 @@ def managers_main_menu_kb():
     button6 = KeyboardButton('Chat')
     kb.add(button1, button2, button3, button4, button5, button6)
     return kb
+
+def admin_main_menu_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
+    button1 = KeyboardButton('Shop Owners')
+    button2 = KeyboardButton('Sellers')
+    button3 = KeyboardButton('Managers')
+    button4 = KeyboardButton('Tasks')
+    button5 = KeyboardButton('Gifts to change')
+    button6 = KeyboardButton('Withdrawal of money')
+    button7 = KeyboardButton('Chat')
+    button8 = KeyboardButton('Knowledge Database')
+    kb.add(button1, button2, button3, button4, button5, button6, button7, button8,)
+    return kb
+
+def shop_owner_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    button1 = KeyboardButton("List of owner's shops")
+    button2 = KeyboardButton('Add new shop loc.')
+    button3 = KeyboardButton('Change owners info')
+    button4 = KeyboardButton('Balance')
+    button5 = KeyboardButton('Tasks')
+    kb.add(button1, button2, button3, button4, button5)
+    return kb
