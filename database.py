@@ -202,6 +202,22 @@ def add_manager(user_id,password):
     # Adding  user into database
     manager = sql.execute('UPDATE Managers SET user_id=? WHERE password = ?;', (user_id,password,))
     connection.commit()
+
+# def get_shop_s_locations(manager_id):
+#     connection = sqlite3.connect("Sales Bot1.db")
+#     sql = connection.cursor()
+#     shop_owner_loc = sql.execute("SELECT latitude,longitude FROM Sellers WHERE manager_id = ?;", (manager_id,))
+#     # Проверка есть ли данные из запроса
+#     return shop_owner_loc.fetchall()
+def get_shop_d_locations(manager_id):
+    connection = sqlite3.connect("Sales Bot1.db")
+    sql = connection.cursor()
+    shop_owner_loc = sql.execute("SELECT Shop_address FROM Directors WHERE manager_id = ?;", (manager_id,))
+    # Проверка есть ли данные из запроса
+    return shop_owner_loc.fetchall()
+
+
+
 # ADMIN BRANCH
 # sql.execute("CREATE TABLE Admins (user_id INTEGER, login TEXT, password TEXT);")
 def check_a_log(login):
@@ -224,13 +240,19 @@ def check_a_pas(password):
     else:
         return False
 
-def get_shop_owners(manager_id):
+def get_shop_s_owners(manager_id):
     connection = sqlite3.connect("Sales Bot1.db")
     sql = connection.cursor()
     shop_owner_sel = sql.execute("SELECT * FROM sellers WHERE manager_id = ?;", (manager_id,))
+   # shop_owner_dir = sql.execute("SELECT * FROM Directors WHERE manager_id = ?;", (manager_id,))
+    # Проверка есть ли данные из запроса
+    return shop_owner_sel.fetchall()#shop_owner_dir.fetchall()
+def get_shop_d_owners(manager_id):
+    connection = sqlite3.connect("Sales Bot1.db")
+    sql = connection.cursor()
     shop_owner_dir = sql.execute("SELECT * FROM Directors WHERE manager_id = ?;", (manager_id,))
     # Проверка есть ли данные из запроса
-    return shop_owner_sel.fetchall(),shop_owner_dir.fetchall()
+    return shop_owner_dir.fetchall()
 
 def add_admin(user_id):
     connection = sqlite3.connect("Sales Bot1.db")
@@ -239,3 +261,5 @@ def add_admin(user_id):
     # Adding  user into database
     admin = sql.execute('UPDATE Admins SET user_id WHERE user_id = ?;', (user_id,))
     connection.commit()
+
+print(get_shop_d_locations(111))

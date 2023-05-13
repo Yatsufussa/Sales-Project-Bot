@@ -384,34 +384,74 @@ async def add_shops(message, state=DirectorAddShopLocations.add_shop_state):
     await state.finish()
 
 
-# Managers Shop owners branch
+# Managers Shop owners branch # FOR DIRECTOR AND SELLERS? OR DIRECTORS ONLY
 @dp.message_handler(state=ShopOwnerM.shop_owners_state)
 async def shop_own(message,state=ShopOwnerM.shop_owners_state):
     manager_id = message.text
-    user = database.get_shop_owners(manager_id)
-    if user:
-        owner_info = "Owners Personal Info:\n"
-        for i in user:
-            owner_info = f'Name: {i[1]}.\nPhone: {i[2]}.\nLocation Latitude: {i[3]}.Location Longitude: {i[4]}\nTIN: {i[5]}.\nShop name: {i[6]}'
+    # seller = database.get_shop_s_owners(manager_id)
+    director = database.get_shop_d_owners(manager_id)
+    d_locatons = database.get_shop_d_locations(manager_id)
+
+    if director:
+        owner_info = "Owners Personal Info\nDirector:\n"
+        for i in director:
+            owner_info = f'Name: {i[1]}.\nPhone: {i[2]}.\nTIN: {i[3]}.\nShop name: {i[5]}.\nShop locations: {i[-1]}.'
             await message.answer(owner_info, reply_markup=buttons.shop_owner_kb())
-            choice = message.text
-            if choice == "List of owner's shops":
-                pass
-            elif choice == 'Add new shop loc.':
-                pass
-            elif choice == 'Change owners info':
-                pass
-            elif choice == 'Balance':
-                pass
-            elif choice == 'Tasks':
-                pass
-            else:
-                await message.answer('Choose the button!')
-    else:
+
+    elif message.text == "List of owner's shops":
+        for i in d_locatons:
+            loc = f'Shop Locations\nLatitude and Longitude:\n{i[0][0]}'
+            await message.answer(loc,reply_markup=buttons.shop_owner_kb())
+
+    elif message.text == 'Add new shop loc.':
         pass
-
-
-
+    elif message.text == 'Change owners info':
+        pass
+    elif message.text == 'Balance':
+        pass
+    elif message.text == 'Tasks':
+        pass
+    else:
+        await message.answer('Choose the button!')
+    # if seller and director == True:
+    #     seller_info = "Owners Personal Info\nSeller:\n"
+    #     for i in seller:
+    #         seller_info = f'Name: {i[1]}.\nPhone: {i[2]}.\nLocation Latitude: {i[3]}.Location Longitude: {i[4]}\nTIN: {i[5]}.\nShop name: {i[6]}'
+    #         for j in director:
+    #             director_info = 'Owners Perosnal Info.\nDirector:\n'
+    #             director_info = f'Name: {i[1]}.\nPhone: {i[2]}.\nTIN: {i[3]}.\nShop name: {i[5]}.\nShop locations: {i[-1]}.'
+    #             await message.answer(seller_info,director_info, reply_markup=buttons.shop_owner_kb())
+    #
+    #     if choice == "List of owner's shops":
+    #         pass
+    #     elif choice == 'Add new shop loc.':
+    #         pass
+    #     elif choice == 'Change owners info':
+    #         pass
+    #     elif choice == 'Balance':
+    #         pass
+    #     elif choice == 'Tasks':
+    #         pass
+    #     else:
+    #         await message.answer('Choose the button!')
+    # if seller:
+    #     owner_info = "Owners Personal Info\nSeller:\n"
+    #     for i in seller:
+    #         owner_info = f'Name: {i[1]}.\nPhone: {i[2]}.\nLocation Latitude: {i[3]}.Location Longitude: {i[4]}\nTIN: {i[5]}.\nShop name: {i[6]}'
+    #         await message.answer(owner_info, reply_markup=buttons.shop_owner_kb())
+    #         choice = message.text
+    #     if choice == "List of owner's shops":
+    #         pass
+    #     elif choice == 'Add new shop loc.':
+    #         pass
+    #     elif choice == 'Change owners info':
+    #         pass
+    #     elif choice == 'Balance':
+    #         pass
+    #     elif choice == 'Tasks':
+    #         pass
+    #     else:
+    #         await message.answer('Choose the button!')
 
 
 
@@ -490,7 +530,7 @@ async def sellors_all_info(message):
 
     elif manager:
         if answer == 'Shop Owners':
-            await message.answer("Write the ID of the Owner: ")
+            await message.answer("Write the ID of the Owner: ",reply_markup=ReplyKeyboardRemove())
             await ShopOwnerM.shop_owners_state.set()
         elif answer == 'Sellers':
             pass
