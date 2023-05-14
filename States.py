@@ -59,6 +59,9 @@ class ShopOwnerM(StatesGroup):
     change_shop_info_state = State()
     change_shop_name_state = State()
     change_shop_loc_state = State()
+    change_directors_name_state = State()
+    change_directors_phone_state = State()
+    change_directors_TIN_state = State()
 class MDirectorPersonal(StatesGroup):
     change_director_pesonal_info_state = State()
     change_name_state = State()

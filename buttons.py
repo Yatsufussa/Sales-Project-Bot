@@ -111,5 +111,8 @@ def managers_change_owner_data_kb():
     kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
     button1 = KeyboardButton("Change Shop address")
     button2 = KeyboardButton("Change Shop name")
-    kb.add(button1,button2)
+    button3 = KeyboardButton("Change Directors name")
+    button4 = KeyboardButton("Change Directors phone")
+    button5 = KeyboardButton("Change Directors TIN")
+    kb.add(button1,button2,button3,button4,button5)
     return kb

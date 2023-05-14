@@ -291,4 +291,26 @@ def m_change_d_shop_loc(latitude,longitude, manager_id):
     new_name = sql.execute("UPDATE Directors SET latitude= ?,longitude=? WHERE manager_id = ?;", (latitude, longitude,manager_id,))
     connection.commit()
 
+def m_change_d_name(directors_name, manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_name = sql.execute("UPDATE Directors SET directors_name=? WHERE manager_id = ?;", (directors_name,manager_id,))
+    connection.commit()
 
+def m_change_d_phone(phone_num, manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_num = sql.execute("UPDATE Directors SET phone_num=? WHERE manager_id = ?;", (phone_num,manager_id,))
+    connection.commit()
+
+def m_change_d_TIN(INN, manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_inn = sql.execute("UPDATE Directors SET INN=? WHERE manager_id = ?;", (INN, manager_id,))
+    connection.commit()
