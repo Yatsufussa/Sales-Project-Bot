@@ -46,13 +46,24 @@ class CheckManager(StatesGroup):
     login_state = State()
     password_state = State()
 
-class ShopOwnerM(StatesGroup):
-    shop_owners_state = State()
-
-
-
-
-
 class CheckAdmin(StatesGroup):
     login_state = State()
     password_state =State()
+
+
+# Manager Director Branch
+class ShopOwnerM(StatesGroup):
+    shop_owners_state = State()
+    change_data_state = State()
+    list_of_shops_state = State()
+    change_shop_info_state = State()
+    change_shop_name_state = State()
+    change_shop_loc_state = State()
+class MDirectorPersonal(StatesGroup):
+    change_director_pesonal_info_state = State()
+    change_name_state = State()
+    change_TIN_state = State()
+    change_phone_phone_number_state = State()
+
+class MAddShopDirrector(StatesGroup):
+    m_add_d_shop_state = State()

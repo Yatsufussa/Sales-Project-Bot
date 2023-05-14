@@ -76,7 +76,7 @@ def directors_main_menu_kb():
 
 def managers_main_menu_kb():
     kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
-    button1 = KeyboardButton('Shop Owners')
+    button1 = KeyboardButton('Directors')
     button2 = KeyboardButton('Sellers')
     button3 = KeyboardButton('Tasks')
     button4 = KeyboardButton('Balance')
@@ -87,7 +87,7 @@ def managers_main_menu_kb():
 
 def admin_main_menu_kb():
     kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=3)
-    button1 = KeyboardButton('Shop Owners')
+    button1 = KeyboardButton('Directors')
     button2 = KeyboardButton('Sellers')
     button3 = KeyboardButton('Managers')
     button4 = KeyboardButton('Tasks')
@@ -100,10 +100,16 @@ def admin_main_menu_kb():
 
 def shop_owner_kb():
     kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-    button1 = KeyboardButton("List of owner's shops")
     button2 = KeyboardButton('Add new shop loc.')
-    button3 = KeyboardButton('Change owners info')
+    button3 = KeyboardButton('Change Director info')
     button4 = KeyboardButton('Balance')
     button5 = KeyboardButton('Tasks')
-    kb.add(button1, button2, button3, button4, button5)
+    button6 = KeyboardButton('Back')
+    kb.add(button2, button3, button4, button5,button6)
+    return kb
+def managers_change_owner_data_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    button1 = KeyboardButton("Change Shop address")
+    button2 = KeyboardButton("Change Shop name")
+    kb.add(button1,button2)
     return kb

@@ -86,16 +86,16 @@ def change_shop_name(new_shop_name,user_id):
 
 
 
-#sql.execute("CREATE TABLE Directors (user_id INTEGER, directors_name TEXT, phone_num TEXT,INN TEXT,shop_name TEXT, manager_id INTEGER );")
+#sql.execute("CREATE TABLE Directors (user_id INTEGER, directors_name TEXT, phone_num TEXT,INN TEXT,shop_name TEXT, manager_id INTEGER,latitude,longitude);")
 
-def add_director(user_id,director_name, phone_num,INN, shop_name, manager_id,Shop_address):
+def add_director(user_id,director_name, phone_num,INN, shop_name, manager_id,latitude,longitude):
     # Create/login to database
     connection = sqlite3.connect("Sales Bot1.db")
     # Creating translator
     sql = connection.cursor()
     # Adding user into database
-    sql.execute("INSERT INTO Directors VALUES (?, ?, ?, ?, ?, ?, ?);",
-                (user_id, director_name, phone_num,INN, shop_name, manager_id,Shop_address))
+    sql.execute("INSERT INTO Directors VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+                (user_id, director_name, phone_num,INN, shop_name, manager_id,latitude,longitude))
     connection.commit()
 
 
@@ -150,17 +150,20 @@ def change_d_shop_name(new_shop_name,user_id):
     new_name = sql.execute("UPDATE Directors SET shop_name= ? WHERE user_id = ?;", (new_shop_name,user_id,))
     connection.commit()
 
-def add_coloumn():
-    connection = sqlite3.connect("Sales Bot1.db")
-    # Creating translator
-    sql = connection.cursor()
-    add_c = sql.execute("ALTER TABLE Directors ADD Shop_address REAL;")
-def add_shops(new_location,user_id):
+# def add_coloumn():
+#     connection = sqlite3.connect("Sales Bot1.db")
+#     # Creating translator
+#     sql = connection.cursor()
+#     add_c = sql.execute("ALTER TABLE Directors ADD Shop_address REAL;")
+
+def add_shops(user_id,director_name, phone_num,INN, shop_name, manager_id,latitude,longitude):
     # Create/login to database
     connection = sqlite3.connect("Sales Bot1.db")
     # Creating translator
     sql = connection.cursor()
-    new_name = sql.execute("INSERT INTO Directors Shop_address= ? WHERE user_id = ?;", (new_location,user_id,))
+    # Adding user into database
+    sql.execute("INSERT INTO Directors VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
+                (user_id, director_name, phone_num,INN, shop_name, manager_id,latitude,longitude))
     connection.commit()
 
 
@@ -212,7 +215,7 @@ def add_manager(user_id,password):
 def get_shop_d_locations(manager_id):
     connection = sqlite3.connect("Sales Bot1.db")
     sql = connection.cursor()
-    shop_owner_loc = sql.execute("SELECT Shop_address FROM Directors WHERE manager_id = ?;", (manager_id,))
+    shop_owner_loc = sql.execute("SELECT latitude,longitude FROM Directors WHERE manager_id = ?;", (manager_id,))
     # Проверка есть ли данные из запроса
     return shop_owner_loc.fetchall()
 
@@ -262,4 +265,30 @@ def add_admin(user_id):
     admin = sql.execute('UPDATE Admins SET user_id WHERE user_id = ?;', (user_id,))
     connection.commit()
 
-print(get_shop_d_locations(111))
+# def delete_coloumn():
+#   # Create/login to database
+#     connection = sqlite3.connect("Sales Bot1.db")
+#     # Creating translator
+#     sql = connection.cursor()
+#     new_name = sql.execute("DROP TABLE Directors;")
+#     connection.commit()
+#
+# delete_coloumn()
+
+def m_change_d_shop_name(new_shop_name,manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_name = sql.execute("UPDATE Directors SET shop_name= ? WHERE manager_id = ?;", (new_shop_name,manager_id,))
+    connection.commit()
+
+def m_change_d_shop_loc(latitude,longitude, manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_name = sql.execute("UPDATE Directors SET latitude= ?,longitude=? WHERE manager_id = ?;", (latitude, longitude,manager_id,))
+    connection.commit()
+
+
