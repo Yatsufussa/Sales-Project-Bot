@@ -116,3 +116,24 @@ def managers_change_owner_data_kb():
     button5 = KeyboardButton("Change Directors TIN")
     kb.add(button1,button2,button3,button4,button5)
     return kb
+
+def managers_main_seller_menu_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    button1 = KeyboardButton("Change Sellers Info")
+    button2 = KeyboardButton("Seller Balance")
+    button3 = KeyboardButton("Seller's Tasks")
+    button4 = KeyboardButton("Seller's Checks")
+    button5 = KeyboardButton("Back")
+    kb.add(button1,button2,button3,button4,button5)
+    return kb
+
+def managers_change_seller_data_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    button1 = KeyboardButton("Change Shop address")
+    button2 = KeyboardButton("Change Shop name")
+    button3 = KeyboardButton("Change Seller's name")
+    button4 = KeyboardButton("Change Seller's phone")
+    button5 = KeyboardButton("Change Seller's TIN")
+    kb.add(button1, button2, button3, button4, button5)
+    return kb
+

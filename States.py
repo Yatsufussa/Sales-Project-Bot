@@ -50,7 +50,6 @@ class CheckAdmin(StatesGroup):
     login_state = State()
     password_state =State()
 
-
 # Manager Director Branch
 class ShopOwnerM(StatesGroup):
     shop_owners_state = State()
@@ -62,11 +61,14 @@ class ShopOwnerM(StatesGroup):
     change_directors_name_state = State()
     change_directors_phone_state = State()
     change_directors_TIN_state = State()
-class MDirectorPersonal(StatesGroup):
-    change_director_pesonal_info_state = State()
-    change_name_state = State()
-    change_TIN_state = State()
-    change_phone_phone_number_state = State()
-
-class MAddShopDirrector(StatesGroup):
     m_add_d_shop_state = State()
+
+class MSeller(StatesGroup):
+    m_main_seller_state = State()
+    sellers_state = State()
+    change_seller_info_state = State()
+    change_shop_name_state = State()
+    change_shop_loc_state = State()
+    change_sellers_name_state = State()
+    change_sellers_phone_state = State()
+    change_sellers_TIN_state = State()

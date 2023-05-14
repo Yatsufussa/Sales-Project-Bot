@@ -219,37 +219,11 @@ def get_shop_d_locations(manager_id):
     # Проверка есть ли данные из запроса
     return shop_owner_loc.fetchall()
 
-
-
-# ADMIN BRANCH
-# sql.execute("CREATE TABLE Admins (user_id INTEGER, login TEXT, password TEXT);")
-def check_a_log(login):
-    connection = sqlite3.connect("Sales Bot1.db")
-    sql = connection.cursor()
-    checker = sql.execute("SELECT login FROM Admins WHERE login = ?;", (login,))
-    # Проверка есть ли данные из запроса
-    if checker.fetchall():
-        return True
-    else:
-        return False
-
-def check_a_pas(password):
-    connection = sqlite3.connect("Sales Bot1.db")
-    sql = connection.cursor()
-    checker = sql.execute("SELECT password FROM Admins WHERE password = ?;", (password,))
-    # Проверка есть ли данные из запроса
-    if checker.fetchall():
-        return True
-    else:
-        return False
-
 def get_shop_s_owners(manager_id):
     connection = sqlite3.connect("Sales Bot1.db")
     sql = connection.cursor()
     shop_owner_sel = sql.execute("SELECT * FROM sellers WHERE manager_id = ?;", (manager_id,))
-   # shop_owner_dir = sql.execute("SELECT * FROM Directors WHERE manager_id = ?;", (manager_id,))
-    # Проверка есть ли данные из запроса
-    return shop_owner_sel.fetchall()#shop_owner_dir.fetchall()
+    return shop_owner_sel.fetchall()
 def get_shop_d_owners(manager_id):
     connection = sqlite3.connect("Sales Bot1.db")
     sql = connection.cursor()
@@ -274,7 +248,7 @@ def add_admin(user_id):
 #     connection.commit()
 #
 # delete_coloumn()
-
+# managers director branch
 def m_change_d_shop_name(new_shop_name,manager_id):
     # Create/login to database
     connection = sqlite3.connect("Sales Bot1.db")
@@ -314,3 +288,76 @@ def m_change_d_TIN(INN, manager_id):
     sql = connection.cursor()
     new_inn = sql.execute("UPDATE Directors SET INN=? WHERE manager_id = ?;", (INN, manager_id,))
     connection.commit()
+
+
+# managers seller branch
+
+# user_id INTEGER, seller_name TEXT, phone_num TEXT, shop_lat REAL,shop_long REAL, INN TEXT,shop_name TEXT, manager_id INTEGER
+def m_change_s_shop_name(new_shop_name,manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_name = sql.execute("UPDATE sellers SET shop_name= ? WHERE manager_id = ?;", (new_shop_name,manager_id,))
+    connection.commit()
+
+def m_change_s_shop_loc(latitude,longitude, manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_name = sql.execute("UPDATE sellers SET shop_lat= ?,shop_long=? WHERE manager_id = ?;", (latitude, longitude,manager_id,))
+    connection.commit()
+
+def m_change_s_name(seller_name, manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_name = sql.execute("UPDATE sellers SET seller_name= ? WHERE manager_id = ?;", (seller_name,manager_id,))
+    connection.commit()
+
+def m_change_s_phone(phone_num, manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_num = sql.execute("UPDATE sellers SET phone_num= ? WHERE manager_id = ?;", (phone_num,manager_id,))
+    connection.commit()
+
+def m_change_s_TIN(INN, manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_inn = sql.execute("UPDATE sellers SET INN= ? WHERE manager_id = ?;", (INN, manager_id,))
+    connection.commit()
+
+
+
+
+
+
+
+
+# ADMIN BRANCH
+# sql.execute("CREATE TABLE Admins (user_id INTEGER, login TEXT, password TEXT);")
+def check_a_log(login):
+    connection = sqlite3.connect("Sales Bot1.db")
+    sql = connection.cursor()
+    checker = sql.execute("SELECT login FROM Admins WHERE login = ?;", (login,))
+    # Проверка есть ли данные из запроса
+    if checker.fetchall():
+        return True
+    else:
+        return False
+
+def check_a_pas(password):
+    connection = sqlite3.connect("Sales Bot1.db")
+    sql = connection.cursor()
+    checker = sql.execute("SELECT password FROM Admins WHERE password = ?;", (password,))
+    # Проверка есть ли данные из запроса
+    if checker.fetchall():
+        return True
+    else:
+        return False

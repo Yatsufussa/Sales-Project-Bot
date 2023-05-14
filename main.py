@@ -421,7 +421,7 @@ async def change_data_menu(message,state=ShopOwnerM.change_shop_info_state):
     action = message.text
     if action == 'Add new shop loc.':
         await message.answer("Share your location pls.\nPress the button.",reply_markup=buttons.location_kb())
-        await MAddShopDirrector.m_add_d_shop_state.set()
+        await ShopOwnerM.m_add_d_shop_state.set()
 
     elif action == 'Change Director info':
         await message.answer('What do u want to change',reply_markup=managers_change_owner_data_kb())
@@ -516,8 +516,8 @@ async def m_change_d_phone(message,state=ShopOwnerM.change_directors_TIN_state):
 
 # Add Shop to director state from manager
 
-@dp.message_handler(state=MAddShopDirrector.m_add_d_shop_state,content_types=['location'])
-async def m_add_shop(message,state = MAddShopDirrector.m_add_d_shop_state):
+@dp.message_handler(state=ShopOwnerM.m_add_d_shop_state,content_types=['location'])
+async def m_add_shop(message,state = ShopOwnerM.m_add_d_shop_state):
     all_info = await state.get_data()
     latitude = message.location.latitude
     longitude = message.location.longitude
@@ -531,14 +531,6 @@ async def m_add_shop(message,state = MAddShopDirrector.m_add_d_shop_state):
     database.add_shops(user_id, directors_name, phone_num, INN, shop_name, manager_id, latitude, longitude)
     await message.answer('Location Updated!', reply_markup=buttons.shop_owner_kb())
     await ShopOwnerM.change_shop_info_state.set()
-
-
-
-
-
-
-
-
 
 # List of only directors shops location not working
 
@@ -565,9 +557,130 @@ async def m_add_shop(message,state = MAddShopDirrector.m_add_d_shop_state):
 #     else:
 #         await message.answer('Director has no shops')
 
+# MANAGERS BRANCH SELLERS
+@dp.message_handler(state=MSeller.m_main_seller_state)
+async def m_main_seller(message,state=MSeller.m_main_seller_state):
+    manager_id = message.text
+    await state.update_data(s_manager_id=manager_id)
+    seller = database.get_shop_s_owners(manager_id)
+    owner_info = "Owners Personal Info\nSellers:\n"
+    if seller:
+        for i in seller:
+            owner_info = f'Name: {i[1]}.\nPhone: {i[2]}.\nShop_lat.: {i[3]}.\nShop_long: {i[4]}.\nTIN(INN): {i[5]}\nShop name: {i[6]}.'
+            await message.answer(owner_info)
+            await message.answer("Choose operation",reply_markup=buttons.managers_main_seller_menu_kb())
+            await MSeller.sellers_state.set()
+    else:
+        await message.answer(f'No such seller with {manager_id}manager ID',reply_markup=managers_main_menu_kb())
+        await state.finish()
+
+# Managers Change Seller Data Branch
+@dp.message_handler(state=MSeller.sellers_state)
+async def seller_main(message,state = MSeller.sellers_state):
+    action = message.text
+    if action == "Change Sellers Info":
+        await message.answer('What do you want to change: ',reply_markup=buttons.managers_change_seller_data_kb())
+        await MSeller.change_seller_info_state.set()
+
+    elif action == "Seller Balance":
+        pass
+
+    elif action == "Seller's Tasks":
+        pass
+
+    elif action == "Seller's Checks":
+        pass
+
+    elif action == "Back":
+        await message.answer("Manager's main menu", reply_markup=buttons.managers_main_menu_kb())
+        await state.finish()
+
+    else:
+        pass
+@dp.message_handler(state=MSeller.change_seller_info_state)
+async def m_change_s_info(message,state = MSeller.change_seller_info_state):
+    action = message.text
+    if action == "Change Shop address":
+        await message.answer("Send new address" ,reply_markup=buttons.location_kb())
+        await MSeller.change_shop_loc_state.set()
+
+    elif action == "Change Shop name":
+        await message.answer("Write new name: ", reply_markup=ReplyKeyboardRemove())
+        await MSeller.change_shop_name_state.set()
+
+    elif action == "Change Seller's name":
+        await message.answer("Write new name: ", reply_markup=ReplyKeyboardRemove())
+        await MSeller.change_sellers_name_state.set()
+
+    elif action == "Change Seller's phone":
+        await message.answer("Send new contact", reply_markup=buttons.get_phone_number_kb())
+        await MSeller.change_sellers_phone_state.set()
+
+    elif action == "Change Seller's TIN":
+        await message.answer("Write new TIN(INN)", reply_markup=ReplyKeyboardRemove())
+        await MSeller.change_sellers_TIN_state.set()
+
+@dp.message_handler(state=MSeller.change_shop_loc_state,content_types=['location'])
+async def m_change_d_shop_loc(message,state= MSeller.change_shop_loc_state):
+    latitude = message.location.latitude
+    longitude = message.location.longitude
+    all_info = await state.get_data()
+    manager_id = all_info.get('s_manager_id')
+    database.m_change_s_shop_loc(latitude, longitude, manager_id)
+    await message.answer('Location changed!', reply_markup=buttons.managers_main_seller_menu_kb())
+    await MSeller.sellers_state.set()
+
+#Change directors shop name from manager
+@dp.message_handler(state= MSeller.change_shop_name_state,content_types=['text'])
+async def m_change_d_shop_loc(message, state= MSeller.change_shop_name_state):
+    all_info = await state.get_data()
+    manager_id = all_info.get('s_manager_id')
+    new_shop_name = message.text
+    database.m_change_s_shop_name(new_shop_name, manager_id)
+    await message.answer("ShopName changed!", reply_markup=buttons.managers_main_seller_menu_kb())
+    await MSeller.sellers_state.set()
+
+
+@dp.message_handler(state= MSeller.change_sellers_name_state,content_types=['text'])
+async def m_change_d_name(message,state= MSeller.change_sellers_name_state):
+    all_info = await state.get_data()
+    manager_id = all_info.get('s_manager_id')
+    seller_name = str(message.from_user)
+    database.m_change_s_name(seller_name,manager_id)
+    await message.answer("Seller's name changed!", reply_markup=buttons.managers_main_seller_menu_kb())
+    await MSeller.sellers_state.set()
+
+@dp.message_handler(state=MSeller.change_sellers_phone_state,content_types=['contact'])
+async def m_change_d_phone(message,state=MSeller.change_sellers_phone_state):
+    all_info = await state.get_data()
+    manager_id = all_info.get('s_manager_id')
+    phone_num = message.from_user
+    database.m_change_s_phone(phone_num,manager_id)
+    await message.answer('Phone number changed!', reply_markup=buttons.managers_main_seller_menu_kb())
+    await MSeller.sellers_state.set()
+
+@dp.message_handler(state= MSeller.change_sellers_TIN_state)
+async def m_change_d_phone(message,state= MSeller.change_sellers_TIN_state):
+    all_info = await state.get_data()
+    manager_id = all_info.get('s_manager_id')
+    INN = str(message.from_user)                       #TIN
+    database.m_change_s_TIN(INN,manager_id)
+    await message.answer('TIN changed!', reply_markup=buttons.managers_main_seller_menu_kb())
+    await MSeller.sellers_state.set()
 
 
 
+
+
+
+
+
+
+
+
+
+
+# MAIN MESSAGE HANDLER
 @dp.message_handler(content_types=['text'])
 async def sellors_all_info(message):
     user_id = message.from_user.id
@@ -639,10 +752,11 @@ async def sellors_all_info(message):
 
     elif manager:
         if answer == 'Directors':
-            await message.answer("Write the ID of the Director: ",reply_markup=ReplyKeyboardRemove())
+            await message.answer("Write the ID of the Director's manager: ",reply_markup=ReplyKeyboardRemove())
             await ShopOwnerM.shop_owners_state.set()
         elif answer == 'Sellers':
-            pass
+            await message.answer("Write the ID of the Seller's manager",reply_markup=ReplyKeyboardRemove())
+            await MSeller.m_main_seller_state.set()
         elif answer == 'Tasks':
             pass
         elif answer == 'Balance':
