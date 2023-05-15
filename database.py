@@ -86,7 +86,7 @@ def change_shop_name(new_shop_name,user_id):
 
 
 
-#sql.execute("CREATE TABLE Directors (user_id INTEGER, directors_name TEXT, phone_num TEXT,INN TEXT,shop_name TEXT, manager_id INTEGER,latitude,longitude);")
+#sql.execute("CREATE TABLE Directors (user_id INTEGER, directors_name TEXT, phone_num TEXT,INN TEXT,shop_name TEXT, manager_id INTEGER,latitude REAL,longitude REAL);")
 
 def add_director(user_id,director_name, phone_num,INN, shop_name, manager_id,latitude,longitude,tasks):
     # Create/login to database
@@ -237,7 +237,7 @@ def add_admin(user_id):
     # Creating translator
     sql = connection.cursor()
     # Adding  user into database
-    admin = sql.execute('UPDATE Admins SET user_id WHERE user_id = ?;', (user_id,))
+    admin = sql.execute('UPDATE Admins SET user_id=?;', (user_id,))
     connection.commit()
 
 # def delete_coloumn():
@@ -388,21 +388,6 @@ def s_delete_task():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # ADMIN BRANCH
 # sql.execute("CREATE TABLE Admins (user_id INTEGER, login TEXT, password TEXT);")
 def check_a_log(login):
@@ -419,6 +404,16 @@ def check_a_pas(password):
     connection = sqlite3.connect("Sales Bot1.db")
     sql = connection.cursor()
     checker = sql.execute("SELECT password FROM Admins WHERE password = ?;", (password,))
+    # Проверка есть ли данные из запроса
+    if checker.fetchall():
+        return True
+    else:
+        return False
+
+def check_admin(user_id):
+    connection = sqlite3.connect("Sales Bot1.db")
+    sql = connection.cursor()
+    checker = sql.execute("SELECT user_id FROM Admins WHERE user_id = ?;", (user_id,))
     # Проверка есть ли данные из запроса
     if checker.fetchall():
         return True

@@ -84,3 +84,36 @@ class Tasks(StatesGroup):
     add_s_tasks = State()
     delete_s_tasks= State()
     change_s_tasks = State()
+
+class AdminShopOwnerM(StatesGroup):
+    shop_owners_state = State()
+    change_data_state = State()
+    list_of_shops_state = State()
+    change_shop_info_state = State()
+    change_shop_name_state = State()
+    change_shop_loc_state = State()
+    change_directors_name_state = State()
+    change_directors_phone_state = State()
+    change_directors_TIN_state = State()
+    m_add_d_shop_state = State()
+
+class AdminSeller(StatesGroup):
+    m_main_seller_state = State()
+    sellers_state = State()
+    change_seller_info_state = State()
+    change_shop_name_state = State()
+    change_shop_loc_state = State()
+    change_sellers_name_state = State()
+    change_sellers_phone_state = State()
+    change_sellers_TIN_state = State()
+
+class AdminTasks(StatesGroup):
+    main_tasks_state = State()
+    d_tasks = State()
+    add_d_tasks = State()
+    delete_d_tasks= State()
+    change_d_tasks = State()
+    s_tasks = State()
+    add_s_tasks = State()
+    delete_s_tasks= State()
+    change_s_tasks = State()
