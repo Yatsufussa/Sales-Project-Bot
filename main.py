@@ -163,8 +163,10 @@ async def seller_manager_id(message, state=SellerRegistration.get_manager_id_sta
     INN = all_info.get('TIN')
     shop_name = all_info.get("shop_name")
     manager_id = all_info.get("manager_id")
+    tasks = "No Task yet"
+    await state.update(tasks = "No Task yet")
     user_id = message.from_user.id
-    database.add_seller(user_id,seller_name, phone_num, latitude, longitude, INN, shop_name, manager_id)
+    database.add_seller(user_id,seller_name, phone_num, latitude, longitude, INN, shop_name, manager_id,tasks)
     await message.answer("Data accepted and collected")
     print(database.get_sellers())
     await state.finish()
@@ -296,9 +298,10 @@ async def director_manager_id(message, state=DirectorRegistration.get_manager_id
     manager_id = all_info.get("d_manager_id")
     latitude = 0
     longitude = 0
+    tasks = "No Task yet"
     director_id = message.from_user.id
     await state.update_data(d_user_id=director_id)
-    database.add_director(director_id,directors_name, phone_num,INN, shop_name, manager_id,latitude,longitude)
+    database.add_director(director_id,directors_name, phone_num,INN, shop_name, manager_id,latitude,longitude,tasks)
     await message.answer("Data accepted and collected")
     print(database.get_director(user_id))
     await state.finish()
@@ -391,8 +394,9 @@ async def add_shops(message, state=DirectorAddShopLocations.add_shop_state):
     all_info = await state.get_data()
     latitude = all_info.get('latitude')
     longitude = all_info.get('longitude')
+    tasks = "No Task yet"
     user_id = message.from_user.id
-    database.add_shops(user_id, directors_name, phone_num, INN, shop_name, manager_id, latitude, longitude)
+    database.add_shops(user_id, directors_name, phone_num, INN, shop_name, manager_id, latitude, longitude,tasks)
     await message.answer('Location Added!', reply_markup=buttons.directors_main_menu_kb())
     await state.finish()
 
@@ -431,7 +435,7 @@ async def change_data_menu(message,state=ShopOwnerM.change_shop_info_state):
         pass
 
     elif action == 'Tasks':
-        pass
+      pass
 
     elif action == 'Back':
         await message.answer("Manager's main menu",reply_markup=buttons.managers_main_menu_kb())
@@ -499,7 +503,7 @@ async def m_change_d_name(message,state=ShopOwnerM.change_directors_name_state):
 async def m_change_d_phone(message,state=ShopOwnerM.change_directors_phone_state):
     all_info = await state.get_data()
     manager_id = all_info.get('d_manager_id')
-    phone_num = message.from_user
+    phone_num = message.contact.phone_number
     database.m_change_d_phone(phone_num,manager_id)
     await message.answer('Phone number changed!', reply_markup=buttons.shop_owner_kb())
     await ShopOwnerM.change_shop_info_state.set()
@@ -508,7 +512,7 @@ async def m_change_d_phone(message,state=ShopOwnerM.change_directors_phone_state
 async def m_change_d_phone(message,state=ShopOwnerM.change_directors_TIN_state):
     all_info = await state.get_data()
     manager_id = all_info.get('d_manager_id')
-    INN = str(message.from_user)                       #TIN
+    INN = message.from_user                 #TIN
     database.m_change_d_TIN(INN,manager_id)
     await message.answer('TIN changed!', reply_markup=buttons.shop_owner_kb())
     await ShopOwnerM.change_shop_info_state.set()
@@ -528,7 +532,8 @@ async def m_add_shop(message,state = ShopOwnerM.m_add_d_shop_state):
     INN = all_info.get('d_TIN')
     shop_name = all_info.get("d_shop_name")
     manager_id = all_info.get("d_manager_id")
-    database.add_shops(user_id, directors_name, phone_num, INN, shop_name, manager_id, latitude, longitude)
+    tasks = "No Task yet"
+    database.add_shops(user_id, directors_name, phone_num, INN, shop_name, manager_id, latitude, longitude,tasks)
     await message.answer('Location Updated!', reply_markup=buttons.shop_owner_kb())
     await ShopOwnerM.change_shop_info_state.set()
 
@@ -596,7 +601,8 @@ async def seller_main(message,state = MSeller.sellers_state):
         await state.finish()
 
     else:
-        pass
+        await message.answer("Press the button to change",reply_markup=buttons.managers_change_seller_data_kb())
+
 @dp.message_handler(state=MSeller.change_seller_info_state)
 async def m_change_s_info(message,state = MSeller.change_seller_info_state):
     action = message.text
@@ -645,7 +651,7 @@ async def m_change_d_shop_loc(message, state= MSeller.change_shop_name_state):
 async def m_change_d_name(message,state= MSeller.change_sellers_name_state):
     all_info = await state.get_data()
     manager_id = all_info.get('s_manager_id')
-    seller_name = str(message.from_user)
+    seller_name = message.from_user
     database.m_change_s_name(seller_name,manager_id)
     await message.answer("Seller's name changed!", reply_markup=buttons.managers_main_seller_menu_kb())
     await MSeller.sellers_state.set()
@@ -654,7 +660,7 @@ async def m_change_d_name(message,state= MSeller.change_sellers_name_state):
 async def m_change_d_phone(message,state=MSeller.change_sellers_phone_state):
     all_info = await state.get_data()
     manager_id = all_info.get('s_manager_id')
-    phone_num = message.from_user
+    phone_num = message.contact.phone_number
     database.m_change_s_phone(phone_num,manager_id)
     await message.answer('Phone number changed!', reply_markup=buttons.managers_main_seller_menu_kb())
     await MSeller.sellers_state.set()
@@ -663,10 +669,123 @@ async def m_change_d_phone(message,state=MSeller.change_sellers_phone_state):
 async def m_change_d_phone(message,state= MSeller.change_sellers_TIN_state):
     all_info = await state.get_data()
     manager_id = all_info.get('s_manager_id')
-    INN = str(message.from_user)                       #TIN
+    INN = message.from_user                   #TIN
     database.m_change_s_TIN(INN,manager_id)
     await message.answer('TIN changed!', reply_markup=buttons.managers_main_seller_menu_kb())
     await MSeller.sellers_state.set()
+
+
+# managers Tasks Branch
+@dp.message_handler(state=Tasks.main_tasks_state)
+async def main_tasks(message,state = Tasks.main_tasks_state):
+
+    if message.text =="Director's Tasks":
+        await message.answer("Director's\nAdd Tasks or Change Tasks?",reply_markup=buttons.directors_tasks_kb())
+        await Tasks.d_tasks.set()
+
+    elif message.text =="Seller's Tasks":
+        await message.answer("Seller's\nAdd Tasks or Change Tasks?",reply_markup=buttons.sellers_tasks_kb())
+        await Tasks.s_tasks.set()
+
+    elif message.text == 'Back':
+        await message.answer("Manager's main menu",reply_markup=buttons.managers_main_menu_kb())
+        await state.finish()
+
+    else:
+        await message.answer("Choose the button to change ",reply_markup=buttons.managers_tasks_kb())
+
+
+# CHange tasks menu for Directors And Sellers
+
+@dp.message_handler(state=Tasks.d_tasks)
+async def D_task(message,state= Tasks.d_tasks):
+    action = message.text
+    if action == "Add Task":
+        await message.answer("Write new Task",reply_markup=ReplyKeyboardRemove())
+        await Tasks.add_d_tasks.set()
+
+    elif action == "Change Task":
+        await message.answer("Write Updated Task",reply_markup=ReplyKeyboardRemove())
+        await Tasks.add_d_tasks.set()
+
+    elif action == "Delete Task":
+        await message.answer("Task deleted",reply_markup=buttons.managers_main_menu_kb())
+        await Tasks.delete_d_task.set()
+
+    elif action == "Back":
+        await message.answer("Manager's main menu",reply_markup=buttons.managers_main_menu_kb())
+        await state.finish()
+
+    else:
+        await message.answer("Choose the button")
+
+
+@dp.message_handler(state=Tasks.s_tasks)
+async def D_task(message, state=Tasks.s_tasks):
+    if message.text == "Add Task":
+        await message.answer("Write new Task", reply_markup=ReplyKeyboardRemove())
+        await Tasks.add_s_tasks.set()
+
+    elif message.text == "Change Task":
+        await message.answer("Write Updated Task", reply_markup=ReplyKeyboardRemove())
+        await Tasks.add_s_tasks.set()
+
+    elif message.text == "Delete Task":
+        await message.answer("Task deleted",reply_markup=buttons.managers_main_menu_kb())
+        await Tasks.delete_s_task.set()
+
+    elif message.text == "Back":
+        await message.answer("Manager's main menu", reply_markup=buttons.managers_main_menu_kb())
+        await state.finish()
+
+    else:
+        await message.answer("Choose the button")
+
+
+@dp.message_handler(state=Tasks.add_d_tasks)
+async def add_d_task(message,state=Tasks.add_d_tasks):
+    TASKS = message.text
+    await message.answer("Task added", reply_markup = buttons.managers_tasks_kb())
+    database.d_add_task(TASKS)
+    await Tasks.main_tasks_state.set()
+
+@dp.message_handler(state=Tasks.change_d_tasks)
+async def add_d_task(message, state=Tasks.change_d_tasks):
+    TASKS = message.text
+    database.d_update_task(TASKS)
+    await message.answer("Task Changed", reply_markup=buttons.managers_tasks_kb())
+    await Tasks.main_tasks_state.set()
+
+
+@dp.message_handler(state=Tasks.delete_d_tasks)
+async def add_d_task(message,state=Tasks.delete_d_tasks):
+    database.d_delete_task()
+    await message.answer("Task's Deleted", reply_markup=buttons.managers_tasks_kb())
+    awaitTasks.main_tasks_state.set()
+
+
+@dp.message_handler(state=Tasks.add_s_tasks)
+async def add_d_task(message,state= Tasks.add_s_tasks):
+    TASKS = message.text
+    database.s_add_task(TASKS)
+    await message.answer("Task added", reply_markup=buttons.managers_tasks_kb())
+    await Tasks.main_tasks_state.set()
+
+
+@dp.message_handler(state=Tasks.change_s_tasks)
+async def add_d_task(message, state=Tasks.change_s_tasks):
+    TASKS = message.text
+    database.s_update_task(TASKS)
+    await message.answer("Task Changed", reply_markup=buttons.managers_tasks_kb())
+    await Tasks.main_tasks_state.set()
+
+
+@dp.message_handler(state=Tasks.add_s_tasks)
+async def add_d_task(message,state= Tasks.add_s_tasks):
+    database.s_delete_task()
+    await message.answer("Tasks Deleted", reply_markup=buttons.managers_tasks_kb())
+    await Tasks.main_tasks_state.set()
+
 
 
 
@@ -691,10 +810,11 @@ async def sellors_all_info(message):
 
     if seller:
         if  answer == 'Personal info':
+            seller_all_info = database.get_seller(user_id)
             result_answer = "Personal Info:\n"
-            for i in seller:
+            for i in seller_all_info:
                 result_answer = f'Name: {i[1]}.\nPhone: {i[2]}.\nLocation Latitude: {i[3]}.Location Longitude: {i[4]}\nTIN: {i[5]}.\nShop name: {i[6]}'
-                await message.answer(result_answer,reply_markup=buttons.sellors_main_menu_kb())
+                await message.answer(result_answer,reply_markup=buttons.change_personal_data_kb())
         elif answer == "Change data":
             await message.answer('What do u want to change', reply_markup=buttons.change_sellors_personal_data_kb())
             await SellersPersonalInfo.change_data_state.set()
@@ -758,7 +878,8 @@ async def sellors_all_info(message):
             await message.answer("Write the ID of the Seller's manager",reply_markup=ReplyKeyboardRemove())
             await MSeller.m_main_seller_state.set()
         elif answer == 'Tasks':
-            pass
+            await message.answer("Tasks to Director or Seller?", reply_markup=buttons.managers_tasks_kb())
+            await Tasks.main_tasks_state.set()
         elif answer == 'Balance':
             pass
         elif answer == 'Gifts to change':

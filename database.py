@@ -4,14 +4,14 @@ sql = connection.cursor()
 
 #sql.execute("CREATE TABLE sellers (user_id INTEGER, seller_name TEXT, phone_num TEXT, shop_lat REAL,shop_long REAL, INN TEXT,shop_name TEXT, manager_id INTEGER );")
 
-def add_seller(user_id,seller_name, phone_num, latitude, longitude, INN, shop_name, manager_id):
+def add_seller(user_id,seller_name, phone_num, latitude, longitude, INN, shop_name, manager_id,tasks):
     # Create/login to database
     connection = sqlite3.connect("Sales Bot1.db")
     # Creating translator
     sql = connection.cursor()
     # Adding user into database
-    sql.execute("INSERT INTO sellers VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
-                (user_id, seller_name, phone_num, latitude, longitude, INN, shop_name, manager_id))
+    sql.execute("INSERT INTO sellers VALUES (?, ?, ?, ?, ?, ?, ?, ?,?);",
+                (user_id, seller_name, phone_num, latitude, longitude, INN, shop_name, manager_id,tasks))
 
 
     # fixiruem obnovleniye
@@ -23,7 +23,7 @@ def get_seller(user_id):
     # Creating translator
     sql = connection.cursor()
     # Adding user into database
-    seller = sql.execute("SELECT * FROM sellers WHERE user_id = ?;",(user_id,))
+    seller = sql.execute("SELECT seller_name,phone_num,latitude,longitude,INN,shop_name FROM sellers WHERE user_id = ?;",(user_id,))
     return seller.fetchall()
 
 def check_user(user_id):
@@ -88,14 +88,14 @@ def change_shop_name(new_shop_name,user_id):
 
 #sql.execute("CREATE TABLE Directors (user_id INTEGER, directors_name TEXT, phone_num TEXT,INN TEXT,shop_name TEXT, manager_id INTEGER,latitude,longitude);")
 
-def add_director(user_id,director_name, phone_num,INN, shop_name, manager_id,latitude,longitude):
+def add_director(user_id,director_name, phone_num,INN, shop_name, manager_id,latitude,longitude,tasks):
     # Create/login to database
     connection = sqlite3.connect("Sales Bot1.db")
     # Creating translator
     sql = connection.cursor()
     # Adding user into database
-    sql.execute("INSERT INTO Directors VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
-                (user_id, director_name, phone_num,INN, shop_name, manager_id,latitude,longitude))
+    sql.execute("INSERT INTO Directors VALUES (?, ?, ?, ?, ?, ?, ?, ?,?);",
+                (user_id, director_name, phone_num,INN, shop_name, manager_id,latitude,longitude,tasks))
     connection.commit()
 
 
@@ -105,7 +105,7 @@ def get_director(user_id):
     # Creating translator
     sql = connection.cursor()
     # Adding user into database
-    director = sql.execute("SELECT * FROM Directors WHERE user_id = ?;",(user_id,))
+    director = sql.execute("SELECT director_name,phone_num,INN, shop_name, manager_id,latitude,longitude FROM Directors WHERE user_id = ?;",(user_id,))
     return director.fetchall()
 
 def check_director(user_id):
@@ -150,20 +150,21 @@ def change_d_shop_name(new_shop_name,user_id):
     new_name = sql.execute("UPDATE Directors SET shop_name= ? WHERE user_id = ?;", (new_shop_name,user_id,))
     connection.commit()
 
-# def add_coloumn():
-#     connection = sqlite3.connect("Sales Bot1.db")
-#     # Creating translator
-#     sql = connection.cursor()
-#     add_c = sql.execute("ALTER TABLE Directors ADD Shop_address REAL;")
+def add_coloumn():
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    add_c = sql.execute("ALTER TABLE sellers ADD TASKS TEXT;")
+    connection.commit()
 
-def add_shops(user_id,director_name, phone_num,INN, shop_name, manager_id,latitude,longitude):
+def add_shops(user_id,director_name, phone_num,INN, shop_name, manager_id,latitude,longitude,tasks):
     # Create/login to database
     connection = sqlite3.connect("Sales Bot1.db")
     # Creating translator
     sql = connection.cursor()
     # Adding user into database
-    sql.execute("INSERT INTO Directors VALUES (?, ?, ?, ?, ?, ?, ?, ?);",
-                (user_id, director_name, phone_num,INN, shop_name, manager_id,latitude,longitude))
+    sql.execute("INSERT INTO Directors VALUES (?, ?, ?, ?, ?, ?, ?, ?,?);",
+                (user_id, director_name, phone_num,INN, shop_name, manager_id,latitude,longitude,tasks))
     connection.commit()
 
 
@@ -332,6 +333,68 @@ def m_change_s_TIN(INN, manager_id):
     sql = connection.cursor()
     new_inn = sql.execute("UPDATE sellers SET INN= ? WHERE manager_id = ?;", (INN, manager_id,))
     connection.commit()
+
+
+# ADD CHANGE DELETE TASKS BRANCH
+def d_add_task(TASKS):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_inn = sql.execute("UPDATE Directors SET TASKS= ?;", (TASKS,))
+    connection.commit()
+def d_update_task(TASKS):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_inn = sql.execute("UPDATE Directors SET TASKS= ?;", (TASKS,))
+    connection.commit()
+
+def d_delete_task():
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    delete_d_task = sql.execute("UPDATE Directors SET TASKS = 'No Tasks yet' ;")
+    connection.commit()
+
+def s_add_task(TASKS):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_s_task = sql.execute("UPDATE sellers SET TASKS= ?;", (TASKS, ))
+    connection.commit()
+
+def s_update_task(TASKS):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    update_s_tasks = sql.execute("UPDATE sellers SET TASKS= ?;", (TASKS, ))
+    connection.commit()
+
+def s_delete_task():
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    delete_s_tasks = sql.execute("UPDATE sellers SET TASKS = 'No Tasks yet';")
+    connection.commit()
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

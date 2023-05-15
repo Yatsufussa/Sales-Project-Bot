@@ -136,4 +136,28 @@ def managers_change_seller_data_kb():
     button5 = KeyboardButton("Change Seller's TIN")
     kb.add(button1, button2, button3, button4, button5)
     return kb
+def managers_tasks_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    button1 = KeyboardButton("Director's Tasks")
+    button2 = KeyboardButton("Seller's Tasks")
+    button4 = KeyboardButton("Back")
+    kb.add(button1, button2, button4)
+    return kb
+def directors_tasks_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    button1 = KeyboardButton("Add Task")
+    button2 = KeyboardButton("Change Task")
+    button3 = KeyboardButton("Delete Task")
+    button4 = KeyboardButton("Back")
+    kb.add(button1, button2,button3,button4)
+    return kb
+
+def sellers_tasks_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    button1 = KeyboardButton("Add Task")
+    button2 = KeyboardButton("Change Task")
+    button3 = KeyboardButton("Delete Task")
+    button4 = KeyboardButton("Back")
+    kb.add(button1, button2,button3,button4)
+    return kb
 

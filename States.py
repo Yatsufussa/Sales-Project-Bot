@@ -72,3 +72,15 @@ class MSeller(StatesGroup):
     change_sellers_name_state = State()
     change_sellers_phone_state = State()
     change_sellers_TIN_state = State()
+
+#D - Director,S-Seller
+class Tasks(StatesGroup):
+    main_tasks_state = State()
+    d_tasks = State()
+    add_d_tasks = State()
+    delete_d_tasks= State()
+    change_d_tasks = State()
+    s_tasks = State()
+    add_s_tasks = State()
+    delete_s_tasks= State()
+    change_s_tasks = State()
