@@ -117,3 +117,6 @@ class AdminTasks(StatesGroup):
     add_s_tasks = State()
     delete_s_tasks= State()
     change_s_tasks = State()
+
+class ChatState(StatesGroup):
+    chat_state = State()

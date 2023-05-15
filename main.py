@@ -1,13 +1,12 @@
 import States
 import database
 import buttons
-from aiogram import Dispatcher, Bot, executor
-from aiogram.types import ReplyKeyboardRemove
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from States import *
 from database import *
 from buttons import *
-
+from aiogram import Dispatcher, Bot, executor
+from aiogram.types import ReplyKeyboardRemove
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 
 bot = Bot("6111497813:AAFWkGgpPGDlK5LiUtA9NOgLcOBbq1d5EAE")
@@ -15,7 +14,7 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 
 @dp.message_handler(commands=['start'],content_types=['text'])
 async def start_command(message):
-    start_text = f'Hello {message.from_user.first_name} Im sales bot SOJ'
+    start_text = f'Hello👋{message.from_user.first_name}\nIm Sales Bot SOJ'
     await message.answer(start_text)
     answer = message.text
     user_id = message.from_user.id
@@ -24,16 +23,16 @@ async def start_command(message):
     manager = database.check_manager(user_id)
 
     if seller:
-        await message.answer("Choose the operation", reply_markup=buttons.sellors_main_menu_kb())
+        await message.answer("Welcome Seller.\nChoose the operation", reply_markup=buttons.sellors_main_menu_kb())
 
     elif director:
-        await message.answer('Hello Director,Choose operation: ' ,reply_markup= buttons.directors_main_menu_kb())
+        await message.answer('Hello Director\nChoose the operation: ' ,reply_markup= buttons.directors_main_menu_kb())
 
     elif manager:
         await message.answer("Welcome Manager!\nWhat do you want?", reply_markup=buttons.managers_main_menu_kb())
 
     else:
-        await message.answer("Registration\n\nAre you:\nSeller\nDirector\nManager\nAdmin", reply_markup=buttons.admin_kb())
+        await message.answer("Registration\nWho Are You❔\nSeller🛒\nDirector🎩\nManager💻\nAdmin💎", reply_markup=buttons.admin_kb())
         await States.AdminPanel.main_state.set()
 
 
@@ -56,29 +55,29 @@ async def main_menu(message):
         await message.answer("Enter Login pls",reply_markup=ReplyKeyboardRemove())
         await CheckAdmin.login_state.set()
     else:
-        await message.answer("Who are u press the button", reply_markup=buttons.admin_kb())
+        await message.answer("Who are u press the button❓", reply_markup=buttons.admin_kb())
 
 # MANAGERS SECURITY LOGIN
 @dp.message_handler(state=CheckManager.login_state)
 async def log(message,state = CheckManager.login_state):
      login = message.text
      if database.check_log(login):
-         await message.answer("Correct login!\nEnter password now: ",reply_markup=ReplyKeyboardRemove())
+         await message.answer("Correct login!✔️\nEnter password now: ",reply_markup=ReplyKeyboardRemove())
          await CheckManager.password_state.set()
      else:
-        await message.answer("Incorrect choose the button! ",reply_markup=admin_kb())
+        await message.answer("Incorrect choose the button!🚫 ",reply_markup=admin_kb())
         await AdminPanel.main_state.set()
 
 @dp.message_handler(state=CheckManager.password_state)
 async def log(message,state = CheckManager.password_state):
      password = message.text
      if database.check_pas(password):
-         await message.answer("Verified Succesfully!\nChoose operations: ",reply_markup=buttons.managers_main_menu_kb())
+         await message.answer("Verified Succesfully!✔️\nChoose operations: ",reply_markup=buttons.managers_main_menu_kb())
          user_id = message.from_user.id
          database.add_manager(user_id,password)
          await state.finish()
      else:
-        await message.answer("Incorrect choose the button! ",reply_markup=admin_kb())
+        await message.answer("Incorrect choose the button! 🚫",reply_markup=admin_kb())
         await AdminPanel.main_state.set()
 
 
@@ -87,22 +86,22 @@ async def log(message,state = CheckManager.password_state):
 async def log_a(message, state=CheckAdmin.login_state):
     login = message.text
     if database.check_a_log(login):
-        await message.answer("Correct login!\nEnter password now: ", reply_markup=ReplyKeyboardRemove())
+        await message.answer("Correct login!✔️\nEnter password now: ", reply_markup=ReplyKeyboardRemove())
         await CheckAdmin.password_state.set()
     else:
-        await message.answer("Incorrect choose the button! ", reply_markup=admin_kb())
+        await message.answer("Incorrect choose the button!🚫 ", reply_markup=admin_kb())
         await AdminPanel.main_state.set()
 
 @dp.message_handler(state=CheckAdmin.password_state)
 async def pas_a(message, state=CheckAdmin.password_state):
     password = message.text
     if database.check_a_pas(password):
-        await message.answer("Verified Succesfully!\nChoose operations: ", reply_markup=buttons.admin_main_menu_kb())
+        await message.answer("Verified Succesfully!✔️\nChoose operations: ", reply_markup=buttons.admin_main_menu_kb())
         user_id = message.from_user.id
         database.add_admin(user_id)
         await state.finish()
     else:
-        await message.answer("Incorrect choose the button! ", reply_markup=admin_kb())
+        await message.answer("Incorrect choose the button! 🚫", reply_markup=admin_kb())
         await AdminPanel.main_state.set()
 
 
@@ -111,7 +110,7 @@ async def pas_a(message, state=CheckAdmin.password_state):
 async def sellers_name(message, state=SellerRegistration.get_sellers_name_state):
     sellers_name = message.text
     await state.update_data(user_name=sellers_name)
-    await message.answer('Share now phone number', reply_markup=buttons.get_phone_number_kb())
+    await message.answer('Share now phone number📲', reply_markup=buttons.get_phone_number_kb())
     await SellerRegistration.get_sellers_phone_number_state.set()
 
 @dp.message_handler(state=SellerRegistration.get_sellers_phone_number_state, content_types=['contact'])
@@ -164,7 +163,7 @@ async def seller_manager_id(message, state=SellerRegistration.get_manager_id_sta
     shop_name = all_info.get("shop_name")
     manager_id = all_info.get("manager_id")
     tasks = "No Task yet"
-    await state.update(tasks = "No Task yet")
+    await state.update_data(tasks = "No Task yet")
     user_id = message.from_user.id
     database.add_seller(user_id,seller_name, phone_num, latitude, longitude, INN, shop_name, manager_id,tasks)
     await message.answer("Data accepted and collected")
@@ -179,7 +178,7 @@ async def change_data(message,state=SellersPersonalInfo.change_data_state):
         await SellersPersonalInfo.change_sellers_name_state.set()
 
     elif admin  == 'Change phone number':
-        await message.answer("Send new phone number: ",reply_markup=buttons.get_phone_number_kb())
+        await message.answer("Send new phone number: 📲",reply_markup=buttons.get_phone_number_kb())
         await SellersPersonalInfo.change_sellers_number_state.set()
 
     elif admin == 'Change shop address':
@@ -206,7 +205,7 @@ async def change_name(message,state=SellersPersonalInfo.change_sellers_name_stat
     new_name = all_info.get('changed_name')
     user_id = message.from_user.id
     database.change_name(new_name,user_id)
-    await message.answer('Your name changed!',reply_markup=buttons.sellors_main_menu_kb())
+    await message.answer('Your name changed!✔️',reply_markup=buttons.sellors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=SellersPersonalInfo.change_sellers_number_state,content_types=['contact'])
@@ -217,7 +216,7 @@ async def chanange_phone_num(message,state=SellersPersonalInfo.change_sellers_nu
     new_num = all_info.get('new_number')
     user_id = message.from_user.id
     database.change_phone_number(new_num,user_id)
-    await message.answer('Your name changed!',reply_markup=buttons.sellors_main_menu_kb())
+    await message.answer('Your number changed!📲',reply_markup=buttons.sellors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=SellersPersonalInfo.change_sellers_addres_state,content_types=['location'])
@@ -230,7 +229,7 @@ async def chanange_phone_num(message,state=SellersPersonalInfo.change_sellers_ad
     latitude = all_info.get('latitude')
     longitude = all_info.get('longitude')
     database.change_shop_address(latitude,longitude,user_id)
-    await message.answer('Location changed!',reply_markup=buttons.sellors_main_menu_kb())
+    await message.answer('Location changed!✔️',reply_markup=buttons.sellors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=SellersPersonalInfo.change_sellers_TIN_state)
@@ -241,7 +240,7 @@ async def chanange_phone_num(message,state=SellersPersonalInfo.change_sellers_TI
     new_inn = all_info.get('new_TIN')
     user_id = message.from_user.id
     database.change_sellers_TIN(new_inn,user_id)
-    await message.answer('Your changed TIN!',reply_markup=buttons.sellors_main_menu_kb())
+    await message.answer('Your changed TIN!✔️',reply_markup=buttons.sellors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=SellersPersonalInfo.change_sellers_ShopsName_state)
@@ -252,7 +251,7 @@ async def chanange_phone_num(message,state=SellersPersonalInfo.change_sellers_Sh
     new_sh_name = all_info.get('new_shop_name')
     user_id = message.from_user.id
     database.change_shop_name(new_sh_name,user_id)
-    await message.answer('You changed Shops name!',reply_markup=buttons.sellors_main_menu_kb())
+    await message.answer('You changed Shops name!✔️',reply_markup=buttons.sellors_main_menu_kb())
     await state.finish()
 
 # DIrector Branch
@@ -261,7 +260,7 @@ async def chanange_phone_num(message,state=SellersPersonalInfo.change_sellers_Sh
 async def directors_name(message, state=DirectorRegistration.get_directors_name_state):
     director_name = message.text
     await state.update_data(d_name=director_name)
-    await message.answer('Share now phone number', reply_markup=buttons.get_phone_number_kb())
+    await message.answer('Share now phone number 📲', reply_markup=buttons.get_phone_number_kb())
     await DirectorRegistration.get_directors_phone_number_state.set()
 
 @dp.message_handler(state=DirectorRegistration.get_directors_phone_number_state, content_types=['contact'])
@@ -316,7 +315,7 @@ async def change_data(message,state=DirectorsPersonalInfo.change_data_state):
         await DirectorsPersonalInfo.change_directors_name_state.set()
 
     elif admin  == 'Change phone number':
-        await message.answer("Send new phone number: ",reply_markup=buttons.get_phone_number_kb())
+        await message.answer("Send new phone number:📲 ",reply_markup=buttons.get_phone_number_kb())
         await DirectorsPersonalInfo.change_directors_number_state.set()
 
     elif admin == 'Change TIN(INN)':
@@ -338,7 +337,7 @@ async def change_name(message,state=DirectorsPersonalInfo.change_directors_name_
     new_name = all_info.get('changed_name')
     user_id = message.from_user.id
     database.change_d_name(new_name,user_id)
-    await message.answer('Your name changed!',reply_markup=buttons.directors_main_menu_kb())
+    await message.answer('Your name changed!✔️',reply_markup=buttons.directors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=DirectorsPersonalInfo.change_directors_number_state,content_types=['contact'])
@@ -349,7 +348,7 @@ async def chanange_phone_num(message,state=DirectorsPersonalInfo.change_director
     new_num = all_info.get('new_number')
     user_id = message.from_user.id
     database.change_d_phone_number(new_num,user_id)
-    await message.answer('Your number changed!',reply_markup=buttons.directors_main_menu_kb())
+    await message.answer('Your number changed!📲v',reply_markup=buttons.directors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=DirectorsPersonalInfo.change_directors_TIN_state)
@@ -360,7 +359,7 @@ async def chanange_phone_num(message,state=DirectorsPersonalInfo.change_director
     new_inn = all_info.get('new_TIN')
     user_id = message.from_user.id
     database.change_directors_TIN(new_inn,user_id)
-    await message.answer('Your changed TIN!',reply_markup=buttons.directors_main_menu_kb())
+    await message.answer('Your changed TIN!✔️',reply_markup=buttons.directors_main_menu_kb())
     await state.finish()
 
 @dp.message_handler(state=DirectorsPersonalInfo.change_directors_ShopsName_state)
@@ -371,7 +370,7 @@ async def chanange_phone_num(message,state=DirectorsPersonalInfo.change_director
     new_sh_name = all_info.get('new_shop_name')
     user_id = message.from_user.id
     database.change_d_shop_name(new_sh_name,user_id)
-    await message.answer('You changed Shops name!',reply_markup=buttons.directors_main_menu_kb())
+    await message.answer('You changed Shops name!✔️',reply_markup=buttons.directors_main_menu_kb())
     await state.finish()
 
 
@@ -435,7 +434,9 @@ async def change_data_menu(message,state=ShopOwnerM.change_shop_info_state):
         pass
 
     elif action == 'Tasks':
-      pass
+         task = database.get_d_task()
+         await message.answer(f"Your Task:\n{task}",reply_markup=buttons.managers_main_menu_kb())
+         await state.finish()
 
     elif action == 'Back':
         await message.answer("Manager's main menu",reply_markup=buttons.managers_main_menu_kb())
@@ -458,7 +459,7 @@ async def change_shop_info(message,state=ShopOwnerM.change_data_state):
         await message.answer("Write new name: ",reply_markup=ReplyKeyboardRemove())
         await ShopOwnerM.change_directors_name_state.set()
 
-    elif message.text == "Change Directors phone":
+    elif message.text == "Change Directors phone 📲":
         await message.answer("Write new name: ",reply_markup=buttons.get_phone_number_kb())
         await ShopOwnerM.change_directors_phone_state.set()
 
@@ -476,7 +477,7 @@ async def m_change_d_shop_loc(message,state= ShopOwnerM.change_shop_loc_state):
     all_info = await state.get_data()
     manager_id = all_info.get('d_manager_id')
     database.m_change_d_shop_loc(latitude, longitude, manager_id)
-    await message.answer('Location changed!', reply_markup=buttons.shop_owner_kb())
+    await message.answer('Location changed!✔️', reply_markup=buttons.shop_owner_kb())
     await ShopOwnerM.change_shop_info_state.set()
 
 #Change directors shop name from manager
@@ -486,7 +487,7 @@ async def m_change_d_shop_loc(message, state=ShopOwnerM.change_shop_name_state):
     manager_id = all_info.get('d_manager_id')
     new_shop_name = message.text
     database.m_change_d_shop_name(new_shop_name, manager_id)
-    await message.answer("ShopName changed!", reply_markup=buttons.shop_owner_kb())
+    await message.answer("ShopName changed!✔️", reply_markup=buttons.shop_owner_kb())
     await ShopOwnerM.change_shop_info_state.set()
 
 
@@ -496,7 +497,7 @@ async def m_change_d_name(message,state=ShopOwnerM.change_directors_name_state):
     manager_id = all_info.get('d_manager_id')
     directors_name = message.text
     database.m_change_d_name(directors_name,manager_id)
-    await message.answer("Director's name changed!", reply_markup=buttons.shop_owner_kb())
+    await message.answer("Director's name changed!✔️", reply_markup=buttons.shop_owner_kb())
     await ShopOwnerM.change_shop_info_state.set()
 
 @dp.message_handler(state=ShopOwnerM.change_directors_phone_state,content_types=['contact'])
@@ -505,7 +506,7 @@ async def m_change_d_phone(message,state=ShopOwnerM.change_directors_phone_state
     manager_id = all_info.get('d_manager_id')
     phone_num = message.contact.phone_number
     database.m_change_d_phone(phone_num,manager_id)
-    await message.answer('Phone number changed!', reply_markup=buttons.shop_owner_kb())
+    await message.answer('Phone number changed! 📲', reply_markup=buttons.shop_owner_kb())
     await ShopOwnerM.change_shop_info_state.set()
 
 @dp.message_handler(state=ShopOwnerM.change_directors_TIN_state)
@@ -514,7 +515,7 @@ async def m_change_d_phone(message,state=ShopOwnerM.change_directors_TIN_state):
     manager_id = all_info.get('d_manager_id')
     INN = message.text               #TIN
     database.m_change_d_TIN(INN,manager_id)
-    await message.answer('TIN changed!', reply_markup=buttons.shop_owner_kb())
+    await message.answer('TIN changed!✔️', reply_markup=buttons.shop_owner_kb())
     await ShopOwnerM.change_shop_info_state.set()
 
 
@@ -534,7 +535,7 @@ async def m_add_shop(message,state = ShopOwnerM.m_add_d_shop_state):
     manager_id = all_info.get("d_manager_id")
     tasks = "No Task yet"
     database.add_shops(user_id, directors_name, phone_num, INN, shop_name, manager_id, latitude, longitude,tasks)
-    await message.answer('Location Updated!', reply_markup=buttons.shop_owner_kb())
+    await message.answer('Location Updated!✔️', reply_markup=buttons.shop_owner_kb())
     await ShopOwnerM.change_shop_info_state.set()
 
 # List of only directors shops location not working
@@ -591,7 +592,9 @@ async def seller_main(message,state = MSeller.sellers_state):
         pass
 
     elif action == "Seller's Tasks":
-        pass
+        task = database.get_s_task()
+        await message.answer(f"Your Task:\n{task}", reply_markup=buttons.managers_main_menu_kb())
+        await state.finish()
 
     elif action == "Seller's Checks":
         pass
@@ -619,7 +622,7 @@ async def m_change_s_info(message,state = MSeller.change_seller_info_state):
         await MSeller.change_sellers_name_state.set()
 
     elif action == "Change Seller's phone":
-        await message.answer("Send new contact", reply_markup=buttons.get_phone_number_kb())
+        await message.answer("Send new contact 📲", reply_markup=buttons.get_phone_number_kb())
         await MSeller.change_sellers_phone_state.set()
 
     elif action == "Change Seller's TIN":
@@ -643,7 +646,7 @@ async def m_change_d_shop_loc(message, state= MSeller.change_shop_name_state):
     manager_id = all_info.get('s_manager_id')
     new_shop_name = message.text
     database.m_change_s_shop_name(new_shop_name, manager_id)
-    await message.answer("ShopName changed!", reply_markup=buttons.managers_main_seller_menu_kb())
+    await message.answer("ShopName changed!✔️", reply_markup=buttons.managers_main_seller_menu_kb())
     await MSeller.sellers_state.set()
 
 
@@ -653,7 +656,7 @@ async def m_change_d_name(message,state= MSeller.change_sellers_name_state):
     manager_id = all_info.get('s_manager_id')
     seller_name = message.text
     database.m_change_s_name(seller_name,manager_id)
-    await message.answer("Seller's name changed!", reply_markup=buttons.managers_main_seller_menu_kb())
+    await message.answer("Seller's name changed!✔️", reply_markup=buttons.managers_main_seller_menu_kb())
     await MSeller.sellers_state.set()
 
 @dp.message_handler(state=MSeller.change_sellers_phone_state,content_types=['contact'])
@@ -662,7 +665,7 @@ async def m_change_d_phone(message,state=MSeller.change_sellers_phone_state):
     manager_id = all_info.get('s_manager_id')
     phone_num = message.contact.phone_number
     database.m_change_s_phone(phone_num,manager_id)
-    await message.answer('Phone number changed!', reply_markup=buttons.managers_main_seller_menu_kb())
+    await message.answer('Phone number changed! 📲', reply_markup=buttons.managers_main_seller_menu_kb())
     await MSeller.sellers_state.set()
 
 @dp.message_handler(state= MSeller.change_sellers_TIN_state)
@@ -671,7 +674,7 @@ async def m_change_d_phone(message,state= MSeller.change_sellers_TIN_state):
     manager_id = all_info.get('s_manager_id')
     INN = message.text                 #TIN
     database.m_change_s_TIN(INN,manager_id)
-    await message.answer('TIN changed!', reply_markup=buttons.managers_main_seller_menu_kb())
+    await message.answer('TIN changed!✔️', reply_markup=buttons.managers_main_seller_menu_kb())
     await MSeller.sellers_state.set()
 
 
@@ -723,14 +726,14 @@ async def D_task(message,state= Tasks.d_tasks):
 @dp.message_handler(state=Tasks.s_tasks)
 async def D_task(message, state=Tasks.s_tasks):
     if message.text == "Add Task":
-        await message.answer("Write new Task", reply_markup=ReplyKeyboardRemove())
+        await message.answer("Write new Task 💬", reply_markup=ReplyKeyboardRemove())
         await Tasks.add_s_tasks.set()
 
     elif message.text == "Change Task":
-        await message.answer("Write Updated Task", reply_markup=ReplyKeyboardRemove())
+        await message.answer("Write Updated Task 📜", reply_markup=ReplyKeyboardRemove())
         await Tasks.add_s_tasks.set()
 
-    elif message.text == "Delete Task":
+    elif message.text == "Delete Task 🗑":
         await message.answer("Task deleted",reply_markup=buttons.managers_main_menu_kb())
         await Tasks.delete_s_task.set()
 
@@ -745,7 +748,7 @@ async def D_task(message, state=Tasks.s_tasks):
 @dp.message_handler(state=Tasks.add_d_tasks)
 async def add_d_task(message,state=Tasks.add_d_tasks):
     TASKS = message.text
-    await message.answer("Task added", reply_markup = buttons.managers_tasks_kb())
+    await message.answer("Task added 💬", reply_markup = buttons.managers_tasks_kb())
     database.d_add_task(TASKS)
     await Tasks.main_tasks_state.set()
 
@@ -753,14 +756,14 @@ async def add_d_task(message,state=Tasks.add_d_tasks):
 async def add_d_task(message, state=Tasks.change_d_tasks):
     TASKS = message.text
     database.d_update_task(TASKS)
-    await message.answer("Task Changed", reply_markup=buttons.managers_tasks_kb())
+    await message.answer("Task Changed 📜", reply_markup=buttons.managers_tasks_kb())
     await Tasks.main_tasks_state.set()
 
 
 @dp.message_handler(state=Tasks.delete_d_tasks)
 async def add_d_task(message,state=Tasks.delete_d_tasks):
     database.d_delete_task()
-    await message.answer("Task's Deleted", reply_markup=buttons.managers_tasks_kb())
+    await message.answer("Task's Deleted 🗑", reply_markup=buttons.managers_tasks_kb())
     awaitTasks.main_tasks_state.set()
 
 
@@ -768,7 +771,7 @@ async def add_d_task(message,state=Tasks.delete_d_tasks):
 async def add_d_task(message,state= Tasks.add_s_tasks):
     TASKS = message.text
     database.s_add_task(TASKS)
-    await message.answer("Task added", reply_markup=buttons.managers_tasks_kb())
+    await message.answer("Task added 💬", reply_markup=buttons.managers_tasks_kb())
     await Tasks.main_tasks_state.set()
 
 
@@ -776,14 +779,14 @@ async def add_d_task(message,state= Tasks.add_s_tasks):
 async def add_d_task(message, state=Tasks.change_s_tasks):
     TASKS = message.text
     database.s_update_task(TASKS)
-    await message.answer("Task Changed", reply_markup=buttons.managers_tasks_kb())
+    await message.answer("Task Changed 📜", reply_markup=buttons.managers_tasks_kb())
     await Tasks.main_tasks_state.set()
 
 
 @dp.message_handler(state=Tasks.add_s_tasks)
 async def add_d_task(message,state= Tasks.add_s_tasks):
     database.s_delete_task()
-    await message.answer("Tasks Deleted", reply_markup=buttons.managers_tasks_kb())
+    await message.answer("Tasks Deleted 🗑", reply_markup=buttons.managers_tasks_kb())
     await Tasks.main_tasks_state.set()
 
 
@@ -815,7 +818,7 @@ async def change_data_menu(message,state=AdminShopOwnerM.change_shop_info_state)
         await AdminShopOwnerM.m_add_d_shop_state.set()
 
     elif action == 'Change Director info':
-        await message.answer('What do u want to change',reply_markup=managers_change_owner_data_kb())
+        await message.answer('What do u want to change⚙️',reply_markup=managers_change_owner_data_kb())
         await AdminShopOwnerM.change_data_state.set()
 
     elif action == 'Balance':
@@ -846,7 +849,7 @@ async def change_shop_info(message,state=AdminShopOwnerM.change_data_state):
         await AdminShopOwnerM.change_directors_name_state.set()
 
     elif message.text == "Change Directors phone":
-        await message.answer("Write new name: ",reply_markup=buttons.get_phone_number_kb())
+        await message.answer("Share number:📲 ",reply_markup=buttons.get_phone_number_kb())
         await AdminShopOwnerM.change_directors_phone_state.set()
 
     elif message.text == "Change Directors TIN":
@@ -873,7 +876,7 @@ async def m_change_d_shop_loc(message, state=AdminShopOwnerM.change_shop_name_st
     manager_id = all_info.get('d_manager_id')
     new_shop_name = message.text
     database.m_change_d_shop_name(new_shop_name, manager_id)
-    await message.answer("ShopName changed!", reply_markup=buttons.shop_owner_kb())
+    await message.answer("ShopName changed!✔️", reply_markup=buttons.shop_owner_kb())
     await AdminShopOwnerM.change_shop_info_state.set()
 
 
@@ -883,7 +886,7 @@ async def m_change_d_name(message,state=AdminShopOwnerM.change_directors_name_st
     manager_id = all_info.get('d_manager_id')
     directors_name = message.text
     database.m_change_d_name(directors_name,manager_id)
-    await message.answer("Director's name changed!", reply_markup=buttons.shop_owner_kb())
+    await message.answer("Director's name changed!✔️", reply_markup=buttons.shop_owner_kb())
     await AdminShopOwnerM.change_shop_info_state.set()
 
 @dp.message_handler(state=AdminShopOwnerM.change_directors_phone_state,content_types=['contact'])
@@ -892,7 +895,7 @@ async def m_change_d_phone(message,state=AdminShopOwnerM.change_directors_phone_
     manager_id = all_info.get('d_manager_id')
     phone_num = message.contact.phone_number
     database.m_change_d_phone(phone_num,manager_id)
-    await message.answer('Phone number changed!', reply_markup=buttons.shop_owner_kb())
+    await message.answer('Phone number changed! 📲', reply_markup=buttons.shop_owner_kb())
     await AdminShopOwnerM.change_shop_info_state.set()
 
 @dp.message_handler(state=AdminShopOwnerM.change_directors_TIN_state)
@@ -901,7 +904,7 @@ async def m_change_d_phone(message,state=AdminShopOwnerM.change_directors_TIN_st
     manager_id = all_info.get('d_manager_id')
     INN = message.text                 #TIN
     database.m_change_d_TIN(INN,manager_id)
-    await message.answer('TIN changed!', reply_markup=buttons.shop_owner_kb())
+    await message.answer('TIN changed!✔️', reply_markup=buttons.shop_owner_kb())
     await AdminShopOwnerM.change_shop_info_state.set()
 
 
@@ -921,7 +924,7 @@ async def m_add_shop(message,state = AdminShopOwnerM.m_add_d_shop_state):
     manager_id = all_info.get("d_manager_id")
     tasks = "No Task yet"
     database.add_shops(user_id, directors_name, phone_num, INN, shop_name, manager_id, latitude, longitude,tasks)
-    await message.answer('Location Updated!', reply_markup=buttons.shop_owner_kb())
+    await message.answer('Location Updated!🏢', reply_markup=buttons.shop_owner_kb())
     await AdminShopOwnerM.change_shop_info_state.set()
 
 
@@ -947,7 +950,7 @@ async def m_main_seller(message,state=AdminSeller.m_main_seller_state):
 async def seller_main(message,state = AdminSeller.sellers_state):
     action = message.text
     if action == "Change Sellers Info":
-        await message.answer('What do you want to change: ',reply_markup=buttons.managers_change_seller_data_kb())
+        await message.answer('What do you want to change:⚙️ ',reply_markup=buttons.managers_change_seller_data_kb())
         await AdminSeller.change_seller_info_state.set()
 
     elif action == "Seller Balance":
@@ -974,7 +977,7 @@ async def m_change_s_info(message,state = AdminSeller.change_seller_info_state):
         await AdminSeller.change_shop_loc_state.set()
 
     elif action == "Change Shop name":
-        await message.answer("Write new name: ", reply_markup=ReplyKeyboardRemove())
+        await message.answer("Write new Shop's name: ", reply_markup=ReplyKeyboardRemove())
         await AdminSeller.change_shop_name_state.set()
 
     elif action == "Change Seller's name":
@@ -1006,7 +1009,7 @@ async def m_change_d_shop_loc(message, state= AdminSeller.change_shop_name_state
     manager_id = all_info.get('s_manager_id')
     new_shop_name = message.text
     database.m_change_s_shop_name(new_shop_name, manager_id)
-    await message.answer("ShopName changed!", reply_markup=buttons.managers_main_seller_menu_kb())
+    await message.answer("ShopName changed!✔️", reply_markup=buttons.managers_main_seller_menu_kb())
     await AdminSeller.sellers_state.set()
 
 
@@ -1016,7 +1019,7 @@ async def m_change_d_name(message,state= AdminSeller.change_sellers_name_state):
     manager_id = all_info.get('s_manager_id')
     seller_name = message.text
     database.m_change_s_name(seller_name,manager_id)
-    await message.answer("Seller's name changed!", reply_markup=buttons.managers_main_seller_menu_kb())
+    await message.answer("Seller's name changed!✔️", reply_markup=buttons.managers_main_seller_menu_kb())
     await AdminSeller.sellers_state.set()
 
 @dp.message_handler(state=AdminSeller.change_sellers_phone_state,content_types=['contact'])
@@ -1025,7 +1028,7 @@ async def m_change_d_phone(message,state=AdminSeller.change_sellers_phone_state)
     manager_id = all_info.get('s_manager_id')
     phone_num = message.contact.phone_number
     database.m_change_s_phone(phone_num,manager_id)
-    await message.answer('Phone number changed!', reply_markup=buttons.managers_main_seller_menu_kb())
+    await message.answer('Phone number changed!✔️', reply_markup=buttons.managers_main_seller_menu_kb())
     await AdminSeller.sellers_state.set()
 
 @dp.message_handler(state= AdminSeller.change_sellers_TIN_state)
@@ -1034,7 +1037,7 @@ async def m_change_d_phone(message,state= AdminSeller.change_sellers_TIN_state):
     manager_id = all_info.get('s_manager_id')
     INN = message.text                 #TIN
     database.m_change_s_TIN(INN,manager_id)
-    await message.answer('TIN changed!', reply_markup=buttons.managers_main_seller_menu_kb())
+    await message.answer('TIN changed!✔️', reply_markup=buttons.managers_main_seller_menu_kb())
     await AdminSeller.sellers_state.set()
 
 
@@ -1151,8 +1154,13 @@ async def add_d_task(message,state= AdminTasks.add_s_tasks):
     await message.answer("Tasks Deleted", reply_markup=buttons.managers_tasks_kb())
     await AdminTasks.main_tasks_state.set()
 
-
-
+# Chat State
+@dp.message_handler(state=ChatState.chat_state)
+async def chat(message,state=ChatState.chat_state):
+    mail = message.text
+    await bot.send_message(877993978, mail)
+    await message.answer("Your mail sended!", reply_markup=buttons.managers_main_menu_kb())
+    await state.finish()
 
 
 
@@ -1174,14 +1182,17 @@ async def sellors_all_info(message):
             seller_all_info = database.get_seller(user_id)
             result_answer = "Personal Info:\n"
             for i in seller_all_info:
-                result_answer = f'Name: {i[1]}.\nPhone: {i[2]}.\nLocation Latitude: {i[3]}.Location Longitude: {i[4]}\nTIN: {i[5]}.\nShop name: {i[6]}'
+                result_answer = f'Name: {i[0]}.\nPhone: {i[1]}.\nLocation Latitude: {i[2]}.Location Longitude: {i[3]}\nTIN: {i[4]}.\nShop name: {i[5]}'
                 await message.answer(result_answer,reply_markup=buttons.change_personal_data_kb())
         elif answer == "Change data":
             await message.answer('What do u want to change', reply_markup=buttons.change_sellors_personal_data_kb())
             await SellersPersonalInfo.change_data_state.set()
 
         elif  answer == 'Tasks':
-            pass
+            task = database.get_s_task()
+            await message.answer(f"Your Task:\n{task}", reply_markup=buttons.sellors_main_menu_kb())
+            await state.finish()
+
         elif  answer == 'Check download':
             pass
         elif  answer == 'Balance':
@@ -1207,37 +1218,46 @@ async def sellors_all_info(message):
                 await message.answer(result_answer, reply_markup=buttons.change_personal_data_kb())
 
         elif answer == "Change data":
-            await message.answer('What do u want to change', reply_markup=buttons.change_directors_personal_data_kb())
+            await message.answer('What do u want to change⚙️', reply_markup=buttons.change_directors_personal_data_kb())
             await DirectorsPersonalInfo.change_data_state.set()
 
         elif answer == 'Tasks':
-            pass
+            task = database.get_d_task()
+            await message.answer(f"Your Task:\n{task}", reply_markup=buttons.directors_main_menu_kb())
+            await state.finish()
 
         elif answer == 'Add shop location':
              await message.answer('Add locations of your shops: ',reply_markup=buttons.location_kb())
              await DirectorAddShopLocations.add_shop_state.set()
 
-
         elif  answer == 'Balance':
             pass
+
         elif  answer == 'Gifts available':
             pass
+
         elif  answer == 'Get the Cash':
-            pass
+            await message.answer("Request sended",reply_markup=buttons.directors_main_menu_kb())
+            await state.finish()
+
         elif  answer == 'Knowledge Base':
             pass
+
         elif  answer == 'Ask a question':
-            pass
+            await message.answer('Write your mail: ', reply_markup=ReplyKeyboardRemove())
+            await ChatState.chat_state.set()
+
         else:
             await message.answer("Choose the buttonn")
 
     elif manager:
+
         if answer == 'Directors':
-            await message.answer("Write the ID of the Director's manager: ",reply_markup=ReplyKeyboardRemove())
+            await message.answer("Write the ID of the Director's manager:🪪",reply_markup=ReplyKeyboardRemove())
             await ShopOwnerM.shop_owners_state.set()
 
         elif answer == 'Sellers':
-            await message.answer("Write the ID of the Seller's manager",reply_markup=ReplyKeyboardRemove())
+            await message.answer("Write the ID of the Seller's manager:🪪",reply_markup=ReplyKeyboardRemove())
             await MSeller.m_main_seller_state.set()
 
         elif answer == 'Tasks':
@@ -1251,7 +1271,9 @@ async def sellors_all_info(message):
             pass
 
         elif answer == 'Chat':
-            pass
+            await message.answer('Write your mail: ', reply_markup=ReplyKeyboardRemove())
+            await ChatState.chat_state.set()
+
 
         else:
             await message.answer("Choose the operation manager")
@@ -1260,11 +1282,11 @@ async def sellors_all_info(message):
     elif admin:
 
         if answer == 'Directors':
-            await message.answer("Write the ID of the Director's manager: ", reply_markup=ReplyKeyboardRemove())
+            await message.answer("Write the ID of the Director's manager:🪪 ", reply_markup=ReplyKeyboardRemove())
             await AdminShopOwnerM.shop_owners_state.set()
 
         elif answer == 'Sellers':
-            await message.answer("Write the ID of the Seller's manager", reply_markup=ReplyKeyboardRemove())
+            await message.answer("Write the ID of the Seller's manager:🪪 ", reply_markup=ReplyKeyboardRemove())
             await AdminSeller.m_main_seller_state.set()
 
         elif answer == 'Tasks':
@@ -1281,7 +1303,8 @@ async def sellors_all_info(message):
             pass
 
         elif answer == 'Chat':
-            pass
+             await message.answer('Write your mail: ',reply_markup=ReplyKeyboardRemove())
+             await ChatState.chat_state.set()
 
         else:
             await message.answer("Choose the operation manager")

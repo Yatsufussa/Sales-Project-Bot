@@ -23,7 +23,7 @@ def get_seller(user_id):
     # Creating translator
     sql = connection.cursor()
     # Adding user into database
-    seller = sql.execute("SELECT seller_name,phone_num,latitude,longitude,INN,shop_name FROM sellers WHERE user_id = ?;",(user_id,))
+    seller = sql.execute("SELECT seller_name,phone_num,shop_lat,shop_long,INN,shop_name FROM sellers WHERE user_id = ?;",(user_id,))
     return seller.fetchall()
 
 def check_user(user_id):
@@ -419,3 +419,19 @@ def check_admin(user_id):
         return True
     else:
         return False
+
+def get_s_task():
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    tasks = sql.execute("SELECT TASKS FROM sellers;")
+    return tasks.fetchone()
+
+def get_d_task():
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    tasks = sql.execute("SELECT TASKS FROM Directors;")
+    return tasks.fetchone()
