@@ -170,7 +170,7 @@ def add_shops(user_id,director_name, phone_num,INN, shop_name, manager_id,latitu
 
 #Managers Branch
 
-#sql.execute("CREATE TABLE Managers (user_id INTEGER, login TEXT, password TEXT);")
+# sql.execute("CREATE TABLE Managers (user_id INTEGER,m_name TEXT,phone_num TEXT, login TEXT, password TEXT,manager_id INTEGER);")
 def check_log(login):
     connection = sqlite3.connect("Sales Bot1.db")
     sql = connection.cursor()
@@ -245,7 +245,7 @@ def add_admin(user_id):
 #     connection = sqlite3.connect("Sales Bot1.db")
 #     # Creating translator
 #     sql = connection.cursor()
-#     new_name = sql.execute("DROP TABLE Directors;")
+#     new_name = sql.execute("DROP TABLE Managers;")
 #     connection.commit()
 #
 # delete_coloumn()
@@ -435,3 +435,56 @@ def get_d_task():
     sql = connection.cursor()
     tasks = sql.execute("SELECT TASKS FROM Directors;")
     return tasks.fetchone()
+
+def a_add_manager(user_id,m_name,phone_num, login, password,manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    tasks = sql.execute("INSERT INTO Managers VALUES(?,?,?,?,?,?);", (user_id,m_name,phone_num, login, password,manager_id,))
+    connection.commit()
+
+def get_manager(manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    tasks = sql.execute("SELECT * FROM Managers WHERE manager_id = ?;",(manager_id,))
+    return tasks.fetchall()
+
+def change_m_name(new_name,manager_id,):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_inn = sql.execute("UPDATE Managers SET m_name= ? WHERE manager_id = ?;", (new_name,manager_id,))
+    connection.commit()
+def change_m_num(new_num,manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_inn = sql.execute("UPDATE Managers SET phone_num= ? WHERE manager_id = ?;", (new_num,manager_id,))
+    connection.commit()
+def change_m_log(new_log,manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_inn = sql.execute("UPDATE Managers SET login= ? WHERE manager_id = ?;", (new_log,manager_id,))
+    connection.commit()
+def change_m_pass(new_pass,manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_inn = sql.execute("UPDATE Managers SET password= ? WHERE manager_id = ?;", (new_pass,manager_id,))
+    connection.commit()
+def change_m_id(new_id,manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_inn = sql.execute("UPDATE Managers SET manager_id = ? WHERE manager_id = ?;", (new_id,manager_id,))
+    connection.commit()
+

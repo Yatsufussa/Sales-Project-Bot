@@ -161,3 +161,20 @@ def sellers_tasks_kb():
     kb.add(button1, button2,button3,button4)
     return kb
 
+def admin_m_main_menu_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    button1 = KeyboardButton("Add Manager")
+    button2 = KeyboardButton("Find Manager")
+    button3 = KeyboardButton("Back")
+    kb.add(button1, button2,button3)
+    return kb
+
+def admin_m_change_data_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    button1 = KeyboardButton("Change name")
+    button2 = KeyboardButton("Change phone")
+    button3 = KeyboardButton("Change login")
+    button4 = KeyboardButton("Change password")
+    button5 = KeyboardButton("Change manager id")
+    kb.add(button1, button2,button3,button4,button5)
+    return kb

@@ -107,6 +107,25 @@ class AdminSeller(StatesGroup):
     change_sellers_phone_state = State()
     change_sellers_TIN_state = State()
 
+class AdminManager(StatesGroup):
+    m_main_manager_state = State()
+    add_manager_state = State()
+    get_managers_name_state = State()
+    get_managers_phone_number_state = State()
+    get_managers_log_state = State()
+    get_managers_password_state = State()
+    get_managers_id_state = State()
+    get_managers_list = State()
+    change_info_state = State()
+    change_managers_name = State()
+    change_managers_phone = State()
+    change_managers_log = State()
+    change_managers_pass = State()
+    change_managers_id = State()
+
+
+
+
 class AdminTasks(StatesGroup):
     main_tasks_state = State()
     d_tasks = State()

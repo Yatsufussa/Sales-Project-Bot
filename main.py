@@ -1154,12 +1154,164 @@ async def add_d_task(message,state= AdminTasks.add_s_tasks):
     await message.answer("Tasks Deleted", reply_markup=buttons.managers_tasks_kb())
     await AdminTasks.main_tasks_state.set()
 
+# ADmins Manager Branch
+@dp.message_handler(state=AdminManager.m_main_manager_state)
+async def adm_m_main(message,state=AdminManager.m_main_manager_state):
+    action = message.text
+    if action == "Add Manager":
+        await message.answer("Write new manager's name: ",reply_markup=ReplyKeyboardRemove())
+        await AdminManager.get_managers_name_state.set()
+    elif action == "Find Manager":
+        await message.answer("Write the id of manager",reply_markup=ReplyKeyboardRemove())
+        await AdminManager.get_managers_list.set()
+    elif action == "Back":
+        pass
+    else:
+        await message.answer("Choose the button",reply_markup=buttons.admin_m_main_menu_kb())
+
+@dp.message_handler(state=AdminManager.get_managers_name_state)
+async def manager_name(message,state=AdminManager.get_managers_name_state):
+    managers_name = message.text
+    await state.update_data(m_name = managers_name)
+    await message.answer("Send manager's number",reply_markup=get_phone_number_kb())
+    await AdminManager.get_managers_phone_number_state.set()
+
+@dp.message_handler(state=AdminManager.get_managers_phone_number_state,content_types=['contact'])
+async def manager_name(message,state=AdminManager.get_managers_phone_number_state):
+    managers_num = message.contact.phone_number
+    await state.update_data(phone_num = managers_num)
+    await message.answer("Write manager's id",reply_markup=ReplyKeyboardRemove())
+    await AdminManager.get_managers_id_state.set()
+
+@dp.message_handler(state=AdminManager.get_managers_id_state)
+async def manager_name(message,state=AdminManager.get_managers_id_state):
+    manager_id = message.text
+    await state.update_data(m_id = manager_id)
+    await message.answer("Write managers Login",reply_markup=ReplyKeyboardRemove())
+    await AdminManager.get_managers_log_state.set()
+
+@dp.message_handler(state=AdminManager.get_managers_log_state)
+async def manager_name(message,state=AdminManager.get_managers_log_state):
+    manager_login = message.text
+    await state.update_data(manager_log = manager_login)
+    await message.answer("Write managers Password",reply_markup=ReplyKeyboardRemove())
+    await AdminManager.get_managers_password_state.set()
+
+@dp.message_handler(state=AdminManager.get_managers_password_state)
+async def manager_name(message,state=AdminManager.get_managers_password_state):
+    password = message.text
+    await message.answer("Manager Added",reply_markup=buttons.admin_main_menu_kb())
+    all_info = await state.get_data()
+    user_id = 0
+    manager_id = all_info.get('m_id')
+    m_name = all_info.get('m_name')
+    phone_num = all_info.get('phone_num')
+    login = all_info.get('manager_log')
+    database.a_add_manager(user_id,m_name,phone_num,login,password,manager_id)
+    print(database.a_add_manager(user_id,m_name,phone_num,login,password,manager_id))
+    await message.answer("Manager Added", reply_markup=buttons.admin_main_menu_kb())
+    await AdminManager.m_main_manager_state.set()
+
+@dp.message_handler(state=AdminManager.get_managers_list)
+async def a_get_manager(message,state =AdminManager.get_managers_list):
+    manager_id = message.text
+    await state.update_data(m_manager_id = manager_id)
+    manager = database.get_manager(manager_id)
+    manager_info = "Manager Infor"
+    if manager:
+        for i in manager:
+            manager_info = f'Name: {i[1]}.\nPhone: {i[2]}.\nLogin.: {i[3]}.\nPassword: {i[4]}.\nManager ID: {i[5]}.'
+            await message.answer(manager_info)
+            await message.answer("Choose operation",reply_markup=buttons.admin_m_change_data_kb())
+            await AdminManager.change_info_state.set()
+    else:
+        await message.answer("No such manager in database",reply_markup=buttons.admin_main_menu_kb())
+        await state.finish()
+
+@dp.message_handler(state=AdminManager.change_info_state)
+async def adm_m_main(message, state=AdminManager.change_info_state):
+    action = message.text
+    if action == "Change name":
+        await message.answer("Write new manager's name: ", reply_markup=ReplyKeyboardRemove())
+        await AdminManager.change_managers_name.set()
+
+    elif action == "Change phone":
+        await message.answer("Share new number", reply_markup=buttons.get_phone_number_kb())
+        await AdminManager.change_managers_phone.set()
+
+    elif action == "Change login":
+        await message.answer("Write the login to change", reply_markup=ReplyKeyboardRemove())
+        await AdminManager.change_managers_log.set()
+
+    elif action == "Change password":
+        await message.answer("Write new password", reply_markup=ReplyKeyboardRemove())
+        await AdminManager.change_managers_pass.set()
+
+    elif action == "Change manager id":
+        await message.answer("Write new  id of manager", reply_markup=ReplyKeyboardRemove())
+        await AdminManager.change_managers_id.set()
+
+    else:
+        await message.answer("Choose the button", reply_markup=buttons.admin_m_main_menu_kb())
+
+@dp.message_handler(state=AdminManager.change_managers_name)
+async def ch_name(message,state = AdminManager.change_managers_name):
+    new_name = message.text
+    all_info = await state.get_data()
+    manager_id = all_info.get('m_manager_id')
+    database.change_m_name(new_name,manager_id)
+    await message.answer("Name changed",reply_markup=buttons.admin_m_main_menu_kb())
+    await AdminManager.m_main_manager_state.set()
+
+@dp.message_handler(state=AdminManager.change_managers_phone,content_types=['contact'])
+async def ch_name(message,state = AdminManager.change_managers_phone):
+    new_num = message.contact.phone_number
+    all_info = await state.get_data()
+    manager_id = all_info.get('m_manager_id')
+    database.change_m_num(new_num,manager_id)
+    await message.answer("Number changed",reply_markup=buttons.admin_m_main_menu_kb())
+    await AdminManager.m_main_manager_state.set()
+
+@dp.message_handler(state=AdminManager.change_managers_log)
+async def ch_name(message,state = AdminManager.change_managers_log):
+    new_log = message.text
+    all_info = await state.get_data()
+    manager_id = all_info.get('m_manager_id')
+    database.change_m_log(new_log,manager_id)
+    await message.answer("Login Changed",reply_markup=buttons.admin_m_main_menu_kb())
+    await AdminManager.m_main_manager_state.set()
+
+@dp.message_handler(state=AdminManager.change_managers_pass)
+async def ch_name(message,state = AdminManager.change_managers_pass):
+    new_pass = message.text
+    all_info = await state.get_data()
+    manager_id = all_info.get('m_manager_id')
+    database.change_m_pass(new_pass,manager_id)
+    await message.answer("Password changed",reply_markup=buttons.admin_m_main_menu_kb())
+    await AdminManager.m_main_manager_state.set()
+
+@dp.message_handler(state=AdminManager.change_managers_id)
+async def ch_name(message,state = AdminManager.change_managers_id):
+    new_id = message.text
+    all_info = await state.get_data()
+    manager_id = all_info.get('m_manager_id')
+    database.change_m_id(new_id,manager_id)
+    await message.answer("ID changed",reply_markup=buttons.admin_m_main_menu_kb())
+    await AdminManager.m_main_manager_state.set()
+
+
+
+
+
+
+
 # Chat State
 @dp.message_handler(state=ChatState.chat_state)
 async def chat(message,state=ChatState.chat_state):
     mail = message.text
     await bot.send_message(877993978, mail)
     await message.answer("Your mail sended!", reply_markup=buttons.managers_main_menu_kb())
+
     await state.finish()
 
 
@@ -1204,7 +1356,8 @@ async def sellors_all_info(message):
         elif  answer == 'Knowledge Base':
             pass
         elif  answer == 'Ask a question':
-            pass
+            await message.answer('Write your mail: ', reply_markup=ReplyKeyboardRemove())
+            await ChatState.chat_state.set()
         else:
             pass
 
@@ -1294,7 +1447,8 @@ async def sellors_all_info(message):
             await AdminTasks.main_tasks_state.set()
 
         elif answer == "Managers":
-            pass
+            await message.answer("Choose the operation",reply_markup=admin_m_main_menu_kb())
+            await AdminManager.m_main_manager_state.set()
 
         elif answer == 'Balance':
             pass
