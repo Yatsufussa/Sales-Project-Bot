@@ -302,7 +302,6 @@ async def director_manager_id(message, state=DirectorRegistration.get_manager_id
     await state.update_data(d_user_id=director_id)
     database.add_director(director_id,directors_name, phone_num,INN, shop_name, manager_id,latitude,longitude,tasks)
     await message.answer("Data accepted and collected")
-    print(database.get_director(user_id))
     await state.finish()
 
 
@@ -1300,11 +1299,6 @@ async def ch_name(message,state = AdminManager.change_managers_id):
     await AdminManager.m_main_manager_state.set()
 
 
-
-
-
-
-
 # Chat State
 @dp.message_handler(state=ChatState.chat_state)
 async def chat(message,state=ChatState.chat_state):
@@ -1313,9 +1307,6 @@ async def chat(message,state=ChatState.chat_state):
     await message.answer("Your mail sended!", reply_markup=buttons.managers_main_menu_kb())
 
     await state.finish()
-
-
-
 
 
 
@@ -1343,7 +1334,6 @@ async def sellors_all_info(message):
         elif  answer == 'Tasks':
             task = database.get_s_task()
             await message.answer(f"Your Task:\n{task}", reply_markup=buttons.sellors_main_menu_kb())
-            await state.finish()
 
         elif  answer == 'Check download':
             pass

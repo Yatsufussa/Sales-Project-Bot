@@ -105,7 +105,7 @@ def get_director(user_id):
     # Creating translator
     sql = connection.cursor()
     # Adding user into database
-    director = sql.execute("SELECT director_name,phone_num,INN, shop_name, manager_id,latitude,longitude FROM Directors WHERE user_id = ?;",(user_id,))
+    director = sql.execute("SELECT directors_name,phone_num,INN, shop_name, manager_id,latitude,longitude FROM Directors WHERE user_id = ?;",(user_id,))
     return director.fetchall()
 
 def check_director(user_id):
