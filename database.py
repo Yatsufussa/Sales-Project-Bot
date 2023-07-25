@@ -488,3 +488,10 @@ def change_m_id(new_id,manager_id):
     new_inn = sql.execute("UPDATE Managers SET manager_id = ? WHERE manager_id = ?;", (new_id,manager_id,))
     connection.commit()
 
+def delete_manager(manager_id):
+    # Create/login to database
+    connection = sqlite3.connect("Sales Bot1.db")
+    # Creating translator
+    sql = connection.cursor()
+    new_inn = sql.execute("DELETE FROM Managers WHERE manager_id=?;", (manager_id,))
+    connection.commit()

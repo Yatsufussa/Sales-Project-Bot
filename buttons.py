@@ -178,3 +178,11 @@ def admin_m_change_data_kb():
     button5 = KeyboardButton("Change manager id")
     kb.add(button1, button2,button3,button4,button5)
     return kb
+
+def admin_m_change_delete_kb():
+    kb = ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
+    button1 = KeyboardButton("Change manager info")
+    button2 = KeyboardButton("Delete manager")
+    button3 = KeyboardButton("Back")
+    kb.add(button1,button2,button3)
+    return kb

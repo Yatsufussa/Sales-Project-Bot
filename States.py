@@ -122,6 +122,7 @@ class AdminManager(StatesGroup):
     change_managers_log = State()
     change_managers_pass = State()
     change_managers_id = State()
+    delete_manager_state = State()
 
 
 
